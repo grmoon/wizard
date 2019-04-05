@@ -6,26 +6,28 @@ from wizard.models.fields import (
     RadioButtonField,
 )
 from wizard.models.generic import GenericModel
+from wizard.models.question import Question
 from wizard.models.options import (
     Option,
     RadioButtonOption,
 )
-from wizard.models.question import Question
 from wizard.models.section import Section
 from wizard.models.trigger import Trigger
 from wizard.models.step import Step
+from wizard.models.wizard import Wizard
 
 __all__ = (
-    'Step',
     'Answer',
     'Field',
     'GenericModel',
     'InputField',
     'MultipleChoiceField',
-    'Question',
     'Option',
-    'RadioButtonOption',
+    'Question',
     'RadioButtonField',
+    'RadioButtonOption',
     'Section',
+    'Step',
     'Trigger',
+    'Wizard',
 )

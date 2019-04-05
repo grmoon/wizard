@@ -1,11 +1,11 @@
 <template>
-    <Step :id='1' />
+    <Wizard :id='1' />
 </template>
 
 <script>
-import Step from '@components/Step';
+import Wizard from '@components/Wizard';
 
 export default {
-    components: { Step }
+    components: { Wizard }
 }
 </script>
