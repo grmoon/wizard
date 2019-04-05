@@ -9,8 +9,10 @@ from wizard.models import (
     RadioButtonOption,
     Question,
     Trigger,
+    Section,
 )
 
+admin.site.register(Section)
 admin.site.register(Answer)
 admin.site.register(Trigger)
 admin.site.register(RadioButtonField, RadioButtonFieldAdmin)

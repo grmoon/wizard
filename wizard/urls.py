@@ -6,6 +6,7 @@ from wizard.views import (
     RadioButtonOptionViewSet,
     QuestionViewSet,
     TriggerViewSet,
+    SectionViewSet,
 )
 
 router = DefaultRouter()
@@ -15,5 +16,6 @@ router.register('radio_button_fields', RadioButtonFieldViewSet, basename='radio_
 router.register('radio_button_options', RadioButtonOptionViewSet, basename='radio_button_option')
 router.register('questions', QuestionViewSet, basename='question')
 router.register('triggers', TriggerViewSet, basename='trigger')
+router.register('sections', SectionViewSet, basename='section')
 
 urlpatterns = router.urls

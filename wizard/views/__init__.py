@@ -3,6 +3,7 @@ from wizard.views.fields import RadioButtonFieldViewSet
 from wizard.views.options import RadioButtonOptionViewSet
 from wizard.views.question import QuestionViewSet
 from wizard.views.trigger import TriggerViewSet
+from wizard.views.section import SectionViewSet
 
 
 __all__ = (
@@ -10,5 +11,6 @@ __all__ = (
     'RadioButtonFieldViewSet',
     'RadioButtonOptionViewSet',
     'QuestionViewSet',
+    'SectionViewSet',
     'TriggerViewSet',
 )

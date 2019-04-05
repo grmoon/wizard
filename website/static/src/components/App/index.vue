@@ -1,11 +1,11 @@
 <template>
-    <Question :id='1' />
+    <Section :id='1' />
 </template>
 
 <script>
-import Question from '@components/Question';
+import Section from '@components/Section';
 
 export default {
-    components: { Question }
+    components: { Section }
 }
 </script>
