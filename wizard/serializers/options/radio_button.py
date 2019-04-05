@@ -1,8 +1,7 @@
-from rest_framework import serializers
-
+from wizard.serializers.options.option import OptionSerializer
 from wizard.models import RadioButtonOption
 
-class RadioButtonOptionSerializer(serializers.ModelSerializer):
+class RadioButtonOptionSerializer(OptionSerializer):
     class Meta:
         model = RadioButtonOption
         fields = '__all__'

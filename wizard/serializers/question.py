@@ -6,6 +6,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     answer = serializers.SerializerMethodField()
     field = serializers.PrimaryKeyRelatedField(read_only=True)
     field_class = serializers.CharField(source='field.content_type.model')
+    triggered_by = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Question

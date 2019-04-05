@@ -11,6 +11,7 @@ from wizard.models.options import (
     RadioButtonOption,
 )
 from wizard.models.question import Question
+from wizard.models.trigger import Trigger
 
 __all__ = (
     'Answer',
@@ -22,4 +23,5 @@ __all__ = (
     'Option',
     'RadioButtonOption',
     'RadioButtonField',
+    'Trigger',
 )

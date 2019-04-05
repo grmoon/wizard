@@ -1,5 +1,6 @@
 <template>
     <label>{{ label }}&nbsp;<input
+        @change='input_onChange'
         :checked='checked'
         :name='name'
         :type='type'
@@ -9,6 +10,11 @@
 
 <script>
 export default {
+    methods: {
+        input_onChange(event) {
+            this.$emit('change', event);
+        }
+    },
     props: {
         checked: {
             required: true,

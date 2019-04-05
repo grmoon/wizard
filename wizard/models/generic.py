@@ -15,3 +15,6 @@ class GenericModel(models.Model):
             self.content_type_id = ContentType.objects.get_for_model(self.__class__).pk
 
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return str(self.content_object)

@@ -6,10 +6,12 @@ from wizard.serializers.options import (
     RadioButtonOptionSerializer,
 )
 from wizard.serializers.question import QuestionSerializer
+from wizard.serializers.trigger import TriggerSerializer
 
 __all__ = (
     'AnswerSerializer',
     'QuestionSerializer',
     'RadioButtonFieldSerializer',
     'RadioButtonOptionSerializer',
+    'TriggerSerializer',
 )

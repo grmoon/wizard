@@ -25,7 +25,8 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.vue'],
         alias: {
-            '@components': path.resolve('src', 'components')
+            '@components': path.resolve('src', 'components'),
+            '@js': path.resolve('src', 'js'),
         }
     },
     plugins: [
