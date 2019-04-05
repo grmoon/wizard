@@ -3,9 +3,9 @@
         <RadioButtonOption
             v-for='(option, index) in options'
             @activate='option_onActivate'
-            :id='option'
             :key='index'
             :name='name'
+            :option='option'
             :selectedValue='answer.value'
         />
     </div>
@@ -25,6 +25,38 @@ export default {
         option_onActivate({ triggerIds, value }) {
             this.$emit('deactivate', this.activeTriggerIds);
             this.$emit('activate', triggerIds);
+        },
+        getField() {
+            const self = this;
+
+            return axios.get(`http://localhost:8003/api/v1/radio_button_fields/${this.id}/`)
+                .then((resp) => {
+                    const field = resp.data;
+
+                    self.name = field.name;
+                    self.addField(field);
+
+                    return field;
+                });
+        },
+        getOptions(field) {
+            const self = this;
+            const promises = field.options.map(this.getOption);
+
+            Promise.all(promises).then((options) => {
+                options.sort((option1, option2) => {
+                    return option1.position - option2.position;
+                });
+
+                self.options = options;
+            });
+        },
+        getOption(optionId) {
+            return axios.get(`http://localhost:8003/api/v1/radio_button_options/${optionId}/`)
+                .then(resp => resp.data);
+        },
+        initialize() {
+            this.getField().then(this.getOptions);
         }
     },
     components: { RadioButtonOption },
@@ -45,7 +77,7 @@ export default {
         }),
         initialized() {
             return this.name !== undefined && this.options !== undefined;
-        }
+        },
     },
     props: {
         answer: {
@@ -58,18 +90,7 @@ export default {
         }
     },
     beforeMount() {
-        const self = this;
-
-        axios.get(`http://localhost:8003/api/v1/radio_button_fields/${this.id}/`)
-            .then((resp) => {
-                const field = resp.data;
-                const options = Array.from(field.options);
-                options.sort();
-
-                self.name = field.name;
-                self.options = options;
-                self.addField(field);
-            });
-    },
+        this.initialize();
+    }
 };
 </script>
