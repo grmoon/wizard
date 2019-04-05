@@ -1,11 +1,11 @@
 <template>
-    <Section :id='1' />
+    <Step :id='1' />
 </template>
 
 <script>
-import Section from '@components/Section';
+import Step from '@components/Step';
 
 export default {
-    components: { Section }
+    components: { Step }
 }
 </script>

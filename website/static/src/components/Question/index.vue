@@ -3,13 +3,13 @@
         v-if='initialized'
         class='question'
     >
-        <h4>{{ text }}</h4>
+        <h4>{{ question.text }}</h4>
         <Field
             @activate='field_onActivate'
             @deactivate='field_onDeactivate'
             :answer='answer'
-            :fieldClass='fieldClass'
-            :id='fieldId'
+            :fieldClass='question.field_class'
+            :id='question.field'
         />
         <div
             v-if='triggers.length > 0'
@@ -40,16 +40,13 @@ export default {
     name: 'Question',
     data() {
         return {
-            answer: undefined,
-            fieldId: undefined,
-            fieldClass: undefined,
-            text: undefined
+            answer: undefined
         }
     },
     computed: {
         ...mapFieldState({
             field({ fields }) {
-                return fields[this.fieldId];
+                return fields[this.question.field];
             }
         }),
         ...mapTriggerState({
@@ -76,16 +73,13 @@ export default {
             }
         }),
         initialized() {
-            return this.fieldId !== undefined &&
-                this.fieldClass !== undefined &&
-                this.text !== undefined &&
-                this.answer !== undefined
+            return this.answer !== undefined;
         }
     },
     props: {
-        id: {
+        question: {
             required: true,
-            type: Number
+            type: Object
         }
     },
     methods: {
@@ -96,34 +90,17 @@ export default {
         field_onDeactivate(triggerIds) {
             triggerIds.forEach(this.deactivate);
         },
-        initialize() {
-            this.getQuestion().then(this.getAnswer);
-        },
-        getQuestion() {
+        getAnswer() {
             const self = this;
 
-            return axios.get(`http://localhost:8003/api/v1/questions/${this.id}/`)
-                .then((resp) => {
-                    const question = resp.data;
-
-                    self.fieldId = question.field;
-                    self.fieldClass = question.field_class;
-                    self.text = question.text;
-
-                    return question;
-                });
-        },
-        getAnswer(question) {
-            const self = this;
-
-            if (question.answer === null) {
+            if (this.question.answer === null) {
                 self.answer = {
-                    question: question.id,
+                    question: this.question.id,
                     value: null
                 }
             }
             else {
-                axios.get(`http://localhost:8003/api/v1/answers/${question.answer}/`)
+                axios.get(`http://localhost:8003/api/v1/answers/${this.question.answer}/`)
                     .then((resp) => {
                         self.answer = resp.data;
                     });
@@ -131,7 +108,7 @@ export default {
         }
     },
     beforeMount() {
-        this.initialize()
+        this.getAnswer();
     },
 };
 </script>

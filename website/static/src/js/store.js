@@ -3,6 +3,18 @@ import Vue from 'vue';
 
 Vue.use(Vuex);
 
+const questions = {
+    namespaced: true,
+    state: {
+        questions: {},
+    },
+    mutations: {
+        addQuestion(state, question) {
+            Vue.set(state.questions, question.id, question);
+        }
+    }
+}
+
 const fields = {
     namespaced: true,
     state: {
@@ -42,6 +54,7 @@ const triggers = {
 export default new Vuex.Store({
     modules: {
         fields,
+        questions,
         triggers,
     }
 });

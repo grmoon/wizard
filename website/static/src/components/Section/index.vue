@@ -3,7 +3,7 @@
         <h3>{{ name }}</h3>
         <Question
             v-for='(question, index) in questions'
-            :id='question'
+            :question='question'
             :key='index'
         />
     </div>
@@ -27,6 +27,39 @@ export default {
                 this.name !== undefined;
         }
     },
+    methods: {
+        initialize() {
+            return this.getSection().then(this.getQuestions);
+        },
+        getSection() {
+            const self = this;
+
+            return axios.get(`http://localhost:8003/api/v1/sections/${this.id}/`)
+                .then((resp) => {
+                    const section = resp.data;
+
+                    self.name = section.name;
+
+                    return section;
+                });
+        },
+        getQuestions(section) {
+            const self = this;
+            const promises = section.questions.map(this.getQuestion);
+
+            Promise.all(promises).then((questions) => {
+                questions.sort((question1, question2) => {
+                    return question1.position - question2.position;
+                });
+
+                self.questions = questions
+            });
+        },
+        getQuestion(questionId) {
+            return axios.get(`http://localhost:8003/api/v1/questions/${questionId}/`)
+                .then(resp => resp.data);
+        }
+    },
     props: {
         id: {
             required: true,
@@ -34,18 +67,7 @@ export default {
         }
     },
     beforeMount() {
-        const self = this;
-
-        axios.get(`http://localhost:8003/api/v1/sections/${this.id}/`)
-            .then((resp) => {
-                const section = resp.data;
-                const questions = section.questions;
-
-                questions.sort((question1, question2) => question1 - question2);
-
-                self.questions = questions;
-                self.name = section.name;
-            });
+        this.initialize()
     }
 }
 </script>

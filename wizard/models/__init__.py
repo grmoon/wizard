@@ -13,8 +13,10 @@ from wizard.models.options import (
 from wizard.models.question import Question
 from wizard.models.section import Section
 from wizard.models.trigger import Trigger
+from wizard.models.step import Step
 
 __all__ = (
+    'Step',
     'Answer',
     'Field',
     'GenericModel',
