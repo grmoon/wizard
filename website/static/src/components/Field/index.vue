@@ -1,5 +1,9 @@
 <template>
-    <component :is='component' :id='id' />
+    <component
+        :answer='answer'
+        :id='id'
+        :is='component'
+    />
 </template>
 
 <script>
@@ -15,6 +19,10 @@ export default {
         }
     },
     props: {
+        answer: {
+            required: true,
+            type: Object
+        },
         fieldClass: {
             required: true,
             type: String

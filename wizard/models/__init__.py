@@ -1,3 +1,4 @@
+from wizard.models.answer import Answer
 from wizard.models.fields import (
     Field,
     InputField,
@@ -12,12 +13,13 @@ from wizard.models.options import (
 from wizard.models.question import Question
 
 __all__ = (
-    'Field'
+    'Answer',
+    'Field',
     'GenericModel',
     'InputField',
     'MultipleChoiceField',
     'Question',
     'Option',
-    'RadioButtonOption'
-    'RadioButtonField'
+    'RadioButtonOption',
+    'RadioButtonField',
 )

@@ -2,7 +2,7 @@
     <Option
         v-if='initialized'
         type='radio'
-        :checked='false'
+        :checked='checked'
         :label='label'
         :name='name'
         :value='value'
@@ -35,9 +35,15 @@ export default {
         name: {
             required: true,
             type: String
+        },
+        selectedValue: {
+            required: true
         }
     },
     computed: {
+        checked() {
+            return this.selectedValue == this.value;
+        },
         initialized() {
             return this.label !== undefined && this.value !== undefined;
         }

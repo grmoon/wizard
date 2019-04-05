@@ -5,6 +5,7 @@
             :id='option'
             :key='index'
             :name='name'
+            :selectedValue='answer.value'
         />
     </div>
 </template>
@@ -27,6 +28,10 @@ export default {
         }
     },
     props: {
+        answer: {
+            required: true,
+            type: Object
+        },
         id: {
             required: true,
             type: Number
