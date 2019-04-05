@@ -1,9 +1,9 @@
 <template>
     <div v-if='initialized'>
-        <h2>Step {{ position }}</h2>
+        <h2>Step {{ step.position }}</h2>
         <Section
             v-for='(section, index) in sections'
-            :id='section'
+            :section='section'
             :key='index'
         />
     </div>
@@ -17,35 +17,40 @@ export default {
     components: { Section },
     data() {
         return {
-            sections: undefined,
-            position: undefined
+            sections: undefined
         }
     },
     computed: {
         initialized() {
-            return this.sections !== undefined &&
-                this.position !== undefined;
+            return this.sections !== undefined;
         }
     },
     props: {
-        id: {
+        step: {
             required: true,
-            type: Number
+            type: Object
+        }
+    },
+    methods: {
+        getSections() {
+            const self = this;
+            const promises = this.step.sections.map(this.getSection);
+
+            Promise.all(promises).then((sections) => {
+                sections.sort((section1, section2) => {
+                    return section1.position - section2.position;
+                });
+
+                self.sections = sections
+            });
+        },
+        getSection(sectionId) {
+            return axios.get(`http://localhost:8003/api/v1/sections/${sectionId}/`)
+                .then(resp => resp.data);
         }
     },
     beforeMount() {
-        const self = this;
-
-        axios.get(`http://localhost:8003/api/v1/steps/${this.id}/`)
-            .then((resp) => {
-                const step = resp.data;
-                const sections = step.sections;
-
-                sections.sort((section1, section2) => section1 - section2);
-
-                self.sections = sections;
-                self.position = step.position;
-            });
+        this.getSections();
     }
 }
 </script>

@@ -2,8 +2,8 @@
     <div v-if='initialized'>
         <h1>{{ name }}</h1>
         <Step
-            v-for='(stepId, index) in stepIds'
-            :id='stepId'
+            v-for='(step, index) in steps'
+            :step='step'
             :key='index'
         />
     </div>
@@ -24,26 +24,50 @@ export default {
     data() {
         return {
             name: undefined,
-            stepIds: undefined
+            steps: undefined
         }
     },
     computed: {
         initialized() {
             return this.name !== undefined &&
-                this.stepIds !== undefined;
+                this.steps !== undefined;
+        }
+    },
+    methods: {
+        initialize() {
+            return this.getWizard().then(this.getSteps);
+        },
+        getWizard() {
+            const self = this;
+
+            return axios.get(`http://localhost:8003/api/v1/wizards/${this.id}/`)
+                .then((resp) => {
+                    const wizard = resp.data;
+
+                    self.name = wizard.name;
+
+                    return wizard;
+                });
+        },
+        getSteps(wizard) {
+            const self = this;
+            const promises = wizard.steps.map(this.getStep);
+
+            Promise.all(promises).then((steps) => {
+                steps.sort((step1, step2) => {
+                    return step1.position - step2.position;
+                });
+
+                self.steps = steps
+            });
+        },
+        getStep(stepId) {
+            return axios.get(`http://localhost:8003/api/v1/steps/${stepId}/`)
+                .then(resp => resp.data);
         }
     },
     beforeMount() {
-        const self = this;
-
-        axios.get(`http://localhost:8003/api/v1/wizards/${this.id}/`)
-            .then((resp) => {
-                const wizard = resp.data;
-
-                self.stepIds = wizard.steps;
-                self.name = wizard.name;
-            })
-
+        this.initialize();
     }
 }
 </script>
