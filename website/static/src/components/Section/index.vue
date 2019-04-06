@@ -33,14 +33,12 @@ export default {
 
             Promise.all(promises).then((questions) => {
                 questions.sort(sortByPosition);
-                self.questions = questions;
+
+                self.questions = questions.map(question => question.question);
             });
         },
         getQuestion(questionId) {
-            const config = { params: { section_id: this.section.id }}
-
-            return axios.get(`http://localhost:8003/api/v1/questions/${questionId}/`, config)
-                .then(resp => resp.data);
+            return axios.get(`http://localhost:8003/api/v1/section_questions/${questionId}/`).then(resp => resp.data);
         }
     },
     props: {

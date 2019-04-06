@@ -5,9 +5,13 @@ from wizard.views import (
     OptionViewSet,
     QuestionViewSet,
     RadioButtonFieldViewSet,
+    RadioButtonFieldOptionViewSet,
+    SectionQuestionViewSet,
     SectionViewSet,
+    StepSectionViewSet,
     StepViewSet,
     TriggerViewSet,
+    WizardStepViewSet,
     WizardViewSet,
 )
 
@@ -17,9 +21,13 @@ router.register('answers', AnswerViewSet, basename='answer')
 router.register('options', OptionViewSet, basename='option')
 router.register('questions', QuestionViewSet, basename='question')
 router.register('radio_button_fields', RadioButtonFieldViewSet, basename='radio_button_field')
+router.register('radio_button_field_options', RadioButtonFieldOptionViewSet, basename='radio_button_field_option')
+router.register('section_questions', SectionQuestionViewSet, basename='section_question')
 router.register('sections', SectionViewSet, basename='section')
+router.register('step_sections', StepSectionViewSet, basename='step_section')
 router.register('steps', StepViewSet, basename='step')
 router.register('triggers', TriggerViewSet, basename='trigger')
+router.register('wizard_steps', WizardStepViewSet, basename='wizard_step')
 router.register('wizards', WizardViewSet, basename='wizard')
 
 urlpatterns = router.urls

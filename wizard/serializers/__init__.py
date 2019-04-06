@@ -3,6 +3,12 @@ from wizard.serializers.fields import (
     OptionSerializer,
     RadioButtonFieldSerializer,
 )
+from wizard.serializers.through import (
+    RadioButtonFieldOptionSerializer,
+    SectionQuestionSerializer,
+    StepSectionSerializer,
+    WizardStepSerializer,
+)
 from wizard.serializers.question import QuestionSerializer
 from wizard.serializers.section import SectionSerializer
 from wizard.serializers.step import StepSerializer
@@ -13,9 +19,13 @@ __all__ = (
     'AnswerSerializer',
     'OptionSerializer',
     'QuestionSerializer',
+    'RadioButtonFieldOptionSerializer',
     'RadioButtonFieldSerializer',
+    'SectionQuestionSerializer',
     'SectionSerializer',
+    'StepSectionSerializer',
     'StepSerializer',
     'TriggerSerializer',
     'WizardSerializer',
+    'WizardStepSerializer',
 )

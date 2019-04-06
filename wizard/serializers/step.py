@@ -1,11 +1,14 @@
-from wizard.models import Step, WizardStep
-from wizard.serializers.position import PositionSerializer
+from rest_framework import serializers
 
-class StepSerializer(PositionSerializer):
+from wizard.models import Step, StepSection
+
+
+class StepSerializer(serializers.ModelSerializer):
+    sections = serializers.SerializerMethodField()
+
     class Meta:
         model = Step
         fields = '__all__'
 
-        outer_id = 'wizard_id'
-        inner_model_key = 'step'
-        outer_model = WizardStep
+    def get_sections(self, step, **kwargs):
+        return StepSection.objects.filter(step=step).values_list('pk', flat=True)

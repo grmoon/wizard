@@ -34,11 +34,12 @@ export default {
 
             Promise.all(promises).then((options) => {
                 options.sort(sortByPosition);
-                self.options = options;
+
+                self.options = options.map(option => option.option);
             });
         },
         getOption(optionId) {
-            return axios.get(`http://localhost:8003/api/v1/options/${optionId}/`).then(resp => resp.data);
+            return axios.get(`http://localhost:8003/api/v1/radio_button_field_options/${optionId}/`).then(resp => resp.data);
         },
         initialize() {
             this.getField().then(this.getOptions);

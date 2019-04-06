@@ -55,13 +55,11 @@ export default {
             Promise.all(promises).then((steps) => {
                 steps.sort(sortByPosition);
 
-                self.steps = steps
+                self.steps = steps.map(step => step.step);
             });
         },
         getStep(stepId) {
-            return axios
-                .get(`http://localhost:8003/api/v1/steps/${stepId}/`, { params: { wizard_id: this.id } })
-                .then(resp => resp.data);
+            return axios.get(`http://localhost:8003/api/v1/wizard_steps/${stepId}/`).then(resp => resp.data);
         }
     },
     beforeMount() {

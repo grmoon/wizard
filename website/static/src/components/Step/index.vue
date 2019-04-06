@@ -40,15 +40,11 @@ export default {
             Promise.all(promises).then((sections) => {
                 sections.sort(sortByPosition);
 
-                self.sections = sections
+                self.sections = sections.map(section => section.section);
             });
         },
         getSection(sectionId) {
-            const config = { params: { step_id: this.step.id } };
-
-            return axios
-                .get(`http://localhost:8003/api/v1/sections/${sectionId}/`, config)
-                .then(resp => resp.data);
+            return axios.get(`http://localhost:8003/api/v1/step_sections/${sectionId}/`).then(resp => resp.data);
         }
     },
     beforeMount() {
