@@ -19,7 +19,7 @@ class Trigger(models.Model):
     class Meta:
         unique_together = (
             ('position', 'from_question'),
-            ('to_question', 'from_question'),
+            ('to_question', 'from_question', 'value'),
         )
 
         constraints = [

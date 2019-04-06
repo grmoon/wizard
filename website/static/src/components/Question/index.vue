@@ -13,7 +13,6 @@
             v-if='activeTriggers.length > 0'
             class='subquestions'
         >
-            {{ activeTriggers }}
             <Question
                 v-for='(trigger, index) in activeTriggers'
                 :key='index'
