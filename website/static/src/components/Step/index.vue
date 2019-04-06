@@ -1,6 +1,6 @@
 <template>
     <div v-if='initialized'>
-        <h2>Step {{ step.position }}</h2>
+        <h2>{{ step.name }}</h2>
         <Section
             v-for='(section, index) in sections'
             :section='section'

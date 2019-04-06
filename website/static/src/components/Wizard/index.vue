@@ -1,6 +1,6 @@
 <template>
     <div v-if='initialized'>
-        <h1>{{ name }}</h1>
+        <h1>{{ wizard.name }}</h1>
         <Step
             v-for='(step, index) in steps'
             :step='step'
@@ -17,40 +17,29 @@ import sortByPosition from '@utils/sortByPosition';
 export default {
     components: { Step },
     props: {
-        id: {
+        wizard: {
             required: true,
-            type: Number
+            type: Object
         }
     },
     data() {
         return {
             name: undefined,
-            steps: undefined
+            steps: undefined,
         }
     },
     computed: {
         initialized() {
-            return this.name !== undefined &&
-                this.steps !== undefined;
+            return this.steps !== undefined;
         }
     },
     methods: {
         initialize() {
-            return this.getWizard().then(this.getSteps);
+            return this.getSteps();
         },
-        getWizard() {
+        getSteps() {
             const self = this;
-
-            return axios.get(`http://localhost:8003/api/v1/wizards/${this.id}/`)
-                .then(({ data: wizard }) => {
-                    self.name = wizard.name;
-
-                    return wizard;
-                });
-        },
-        getSteps(wizard) {
-            const self = this;
-            const promises = wizard.steps.map(this.getStep);
+            const promises = this.wizard.steps.map(this.getStep);
 
             Promise.all(promises).then((steps) => {
                 steps.sort(sortByPosition);
