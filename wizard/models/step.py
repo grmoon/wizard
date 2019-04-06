@@ -2,17 +2,8 @@ from django.db import models
 
 
 class Step(models.Model):
-    position = models.PositiveIntegerField()
-    wizard = models.ForeignKey(
-        'wizard.Wizard',
-        on_delete=models.CASCADE,
-        related_name='steps'
-    )
-
-    class Meta:
-        unique_together = (
-            ('position', 'wizard'),
-        )
+    name = models.CharField(max_length=256, unique=True)
+    sections = models.ManyToManyField('wizard.Section', through='wizard.StepSection')
 
     def __str__(self):
-        return 'Step {}'.format(self.position)
+        return self.name

@@ -8,5 +8,9 @@ class SectionQuestion(models.Model):
 
     class Meta:
         unique_together = (
-            ('position', 'question', 'section'),
+            ('position', 'question'),
+            ('question', 'section'),
         )
+
+    def __str__(self):
+        return '{} > {}'.format(self.section, self.question)

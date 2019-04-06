@@ -3,21 +3,25 @@ from wizard.models.fields import (
     Field,
     InputField,
     MultipleChoiceField,
+    Option,
     RadioButtonField,
 )
 from wizard.models.generic import GenericModel
 from wizard.models.question import Question
-from wizard.models.options import (
-    Option,
-    RadioButtonOption,
+from wizard.models.through import (
+    OptionThroughModel,
+    RadioButtonFieldOption,
+    SectionQuestion,
+    StepSection,
+    Trigger,
+    WizardStep,
 )
 from wizard.models.section import Section
-from wizard.models.trigger import Trigger
 from wizard.models.step import Step
 from wizard.models.wizard import Wizard
-from wizard.models.section_question import SectionQuestion
 
 __all__ = (
+    'OptionThroughModel',
     'Answer',
     'Field',
     'GenericModel',
@@ -26,10 +30,12 @@ __all__ = (
     'Option',
     'Question',
     'RadioButtonField',
-    'RadioButtonOption',
+    'RadioButtonFieldOption',
     'Section',
+    'SectionQuestion',
     'Step',
+    'StepSection',
     'Trigger',
     'Wizard',
-    'SectionQuestion',
+    'WizardStep',
 )

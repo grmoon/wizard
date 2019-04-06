@@ -10,11 +10,9 @@
 </template>
 
 <script>
-import axios from 'axios';
 import Question from '@components/Question';
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapMutations } = createNamespacedHelpers('questions');
+import axios from 'axios';
+import sortByPosition from '@utils/sortByPosition';
 
 export default {
     components: { Question },
@@ -29,30 +27,17 @@ export default {
         }
     },
     methods: {
-        ...mapMutations(['addQuestion']),
         getQuestions(section) {
             const self = this;
             const promises = this.section.questions.map(this.getQuestion);
 
             Promise.all(promises).then((questions) => {
-                questions.sort((question1, question2) => {
-                    return question1.position - question2.position;
-                });
-
-                self.questions = questions
+                questions.sort(sortByPosition);
+                self.questions = questions;
             });
         },
         getQuestion(questionId) {
-            const self = this;
-
-            return axios.get(`http://localhost:8003/api/v1/questions/${questionId}/`)
-                .then((resp) => {
-                    const question = resp.data;
-
-                    self.addQuestion(question);
-
-                    return question;
-                });
+            return axios.get(`http://localhost:8003/api/v1/questions/${questionId}/`).then(resp => resp.data);
         }
     },
     props: {

@@ -7,7 +7,7 @@ from wizard.models import (
     Answer,
     Question,
     RadioButtonField,
-    RadioButtonOption,
+    Option,
     Section,
     Step,
     Trigger,
@@ -21,7 +21,7 @@ from wizard.admin.question import QuestionAdmin
 admin.site.register(Answer)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(RadioButtonField, RadioButtonFieldAdmin)
-admin.site.register(RadioButtonOption)
+admin.site.register(Option)
 admin.site.register(Section, SectionAdmin)
 admin.site.register(Step, StepAdmin)
 admin.site.register(Trigger)

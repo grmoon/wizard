@@ -12,6 +12,7 @@
 <script>
 import axios from 'axios';
 import Step from '@components/Step';
+import sortByPosition from '@utils/sortByPosition';
 
 export default {
     components: { Step },
@@ -41,9 +42,7 @@ export default {
             const self = this;
 
             return axios.get(`http://localhost:8003/api/v1/wizards/${this.id}/`)
-                .then((resp) => {
-                    const wizard = resp.data;
-
+                .then(({ data: wizard }) => {
                     self.name = wizard.name;
 
                     return wizard;
@@ -54,16 +53,13 @@ export default {
             const promises = wizard.steps.map(this.getStep);
 
             Promise.all(promises).then((steps) => {
-                steps.sort((step1, step2) => {
-                    return step1.position - step2.position;
-                });
+                steps.sort(sortByPosition);
 
                 self.steps = steps
             });
         },
         getStep(stepId) {
-            return axios.get(`http://localhost:8003/api/v1/steps/${stepId}/`)
-                .then(resp => resp.data);
+            return axios.get(`http://localhost:8003/api/v1/steps/${stepId}/`).then(resp => resp.data);
         }
     },
     beforeMount() {

@@ -2,11 +2,10 @@
     <div v-if='initialized'>
         <RadioButtonOption
             v-for='(option, index) in options'
-            @activate='option_onActivate'
             :key='index'
             :name='name'
             :option='option'
-            :selectedValue='answer.value'
+            :question-id='questionId'
         />
     </div>
 </template>
@@ -14,27 +13,17 @@
 <script>
 import axios from 'axios';
 import RadioButtonOption from '@components/RadioButtonOption';
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapState: mapTriggerState } = createNamespacedHelpers('triggers');
-const { mapMutations: mapFieldMutations } = createNamespacedHelpers('fields');
+import sortByPosition from '@utils/sortByPosition';
+import { mapState } from 'vuex';
 
 export default {
     methods: {
-        ...mapFieldMutations(['addField']),
-        option_onActivate({ triggerIds, value }) {
-            this.$emit('deactivate', this.activeTriggerIds);
-            this.$emit('activate', triggerIds);
-        },
         getField() {
             const self = this;
 
             return axios.get(`http://localhost:8003/api/v1/radio_button_fields/${this.id}/`)
-                .then((resp) => {
-                    const field = resp.data;
-
+                .then(({ data: field }) => {
                     self.name = field.name;
-                    self.addField(field);
 
                     return field;
                 });
@@ -44,16 +33,12 @@ export default {
             const promises = field.options.map(this.getOption);
 
             Promise.all(promises).then((options) => {
-                options.sort((option1, option2) => {
-                    return option1.position - option2.position;
-                });
-
+                options.sort(sortByPosition);
                 self.options = options;
             });
         },
         getOption(optionId) {
-            return axios.get(`http://localhost:8003/api/v1/radio_button_options/${optionId}/`)
-                .then(resp => resp.data);
+            return axios.get(`http://localhost:8003/api/v1/options/${optionId}/`).then(resp => resp.data);
         },
         initialize() {
             this.getField().then(this.getOptions);
@@ -67,12 +52,9 @@ export default {
         }
     },
     computed: {
-        ...mapTriggerState({
-            triggerIds({ triggersByFieldName }) {
-                return triggersByFieldName[this.name] || {};
-            },
-            activeTriggerIds({ triggers }) {
-                return Object.values(this.triggerIds).filter(triggerId => triggers[triggerId].active);
+        ...mapState({
+            answer({ answers }) {
+                return answers[this.questionId];
             }
         }),
         initialized() {
@@ -80,9 +62,9 @@ export default {
         },
     },
     props: {
-        answer: {
+        questionId: {
             required: true,
-            type: Object
+            type: Number
         },
         id: {
             required: true,
