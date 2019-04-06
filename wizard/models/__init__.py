@@ -15,6 +15,7 @@ from wizard.models.section import Section
 from wizard.models.trigger import Trigger
 from wizard.models.step import Step
 from wizard.models.wizard import Wizard
+from wizard.models.section_question import SectionQuestion
 
 __all__ = (
     'Answer',
@@ -30,4 +31,5 @@ __all__ = (
     'Step',
     'Trigger',
     'Wizard',
+    'SectionQuestion',
 )

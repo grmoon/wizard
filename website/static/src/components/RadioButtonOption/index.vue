@@ -76,7 +76,23 @@ export default {
             });
         },
         getTrigger(triggerId) {
-            return axios.get(`http://localhost:8003/api/v1/triggers/${triggerId}/`).then(resp => resp.data);
+            return axios.get(`http://localhost:8003/api/v1/triggers/${triggerId}/`)
+                .then((resp) => {
+                    const trigger = resp.data
+
+                    return this.attachQuestionToTrigger(trigger);
+                });
+        },
+        attachQuestionToTrigger(trigger) {
+            return this.getQuestion(trigger.question).then((question) => {
+                return {
+                    ...trigger,
+                    question,
+                }
+            });
+        },
+        getQuestion(questionId) {
+            return axios.get(`http://localhost:8003/api/v1/questions/${questionId}/`).then(resp => resp.data);
         }
     },
     beforeMount() {

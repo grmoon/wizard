@@ -9,6 +9,8 @@ class Section(models.Model):
         on_delete=models.CASCADE,
         related_name='sections'
     )
+    questions = models.ManyToManyField('wizard.Question', through='wizard.SectionQuestion')
+
 
     class Meta:
         unique_together = (

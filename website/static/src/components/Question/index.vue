@@ -18,7 +18,7 @@
             <Question
                 v-for='(trigger, index) in triggers'
                 :key='index'
-                :id='trigger.question'
+                :question='trigger.question'
             />
         </div>
     </div>

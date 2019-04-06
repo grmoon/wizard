@@ -1,7 +1,12 @@
 from django.contrib import admin
 
 from wizard.models import SectionQuestion
-from wizard.admin.section_question import SectionQuestionInline
+
+
+class SectionQuestionInline(admin.StackedInline):
+    extra = 1
+    model = SectionQuestion
+    show_change_link = True
 
 
 class SectionAdmin(admin.ModelAdmin):

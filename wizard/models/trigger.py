@@ -12,6 +12,12 @@ class Trigger(models.Model):
         on_delete=models.CASCADE,
         related_name='triggered_by'
     )
+    position = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = (
+            ('option', 'position'),
+        )
 
     def __str__(self):
         return '{} -> {}'.format(self.option, self.question)

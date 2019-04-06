@@ -12,6 +12,9 @@
 <script>
 import axios from 'axios';
 import Question from '@components/Question';
+import { createNamespacedHelpers } from 'vuex';
+
+const { mapMutations } = createNamespacedHelpers('questions');
 
 export default {
     components: { Question },
@@ -26,6 +29,7 @@ export default {
         }
     },
     methods: {
+        ...mapMutations(['addQuestion']),
         getQuestions(section) {
             const self = this;
             const promises = this.section.questions.map(this.getQuestion);
@@ -39,8 +43,16 @@ export default {
             });
         },
         getQuestion(questionId) {
+            const self = this;
+
             return axios.get(`http://localhost:8003/api/v1/questions/${questionId}/`)
-                .then(resp => resp.data);
+                .then((resp) => {
+                    const question = resp.data;
+
+                    self.addQuestion(question);
+
+                    return question;
+                });
         }
     },
     props: {

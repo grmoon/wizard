@@ -16,9 +16,10 @@ from wizard.models import (
 from wizard.admin.section import SectionAdmin
 from wizard.admin.step import StepAdmin
 from wizard.admin.wizard import WizardAdmin
+from wizard.admin.question import QuestionAdmin
 
 admin.site.register(Answer)
-admin.site.register(Question)
+admin.site.register(Question, QuestionAdmin)
 admin.site.register(RadioButtonField, RadioButtonFieldAdmin)
 admin.site.register(RadioButtonOption)
 admin.site.register(Section, SectionAdmin)
