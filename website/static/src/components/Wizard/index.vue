@@ -59,7 +59,9 @@ export default {
             });
         },
         getStep(stepId) {
-            return axios.get(`http://localhost:8003/api/v1/steps/${stepId}/`).then(resp => resp.data);
+            return axios
+                .get(`http://localhost:8003/api/v1/steps/${stepId}/`, { params: { wizard_id: this.id } })
+                .then(resp => resp.data);
         }
     },
     beforeMount() {

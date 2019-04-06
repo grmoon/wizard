@@ -1,8 +1,11 @@
-from rest_framework import serializers
+from wizard.models import Section, StepSection
+from wizard.serializers.position import PositionSerializer
 
-from wizard.models import Section
-
-class SectionSerializer(serializers.ModelSerializer):
+class SectionSerializer(PositionSerializer):
     class Meta:
         model = Section
         fields = '__all__'
+
+        outer_id = 'step_id'
+        inner_model_key = 'section'
+        outer_model = StepSection

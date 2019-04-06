@@ -1,10 +1,11 @@
-from rest_framework import serializers
+from wizard.models import Step, WizardStep
+from wizard.serializers.position import PositionSerializer
 
-from wizard.models import Step
-
-class StepSerializer(serializers.ModelSerializer):
-    sections = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
+class StepSerializer(PositionSerializer):
     class Meta:
         model = Step
         fields = '__all__'
+
+        outer_id = 'wizard_id'
+        inner_model_key = 'step'
+        outer_model = WizardStep

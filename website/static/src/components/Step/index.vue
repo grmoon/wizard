@@ -44,7 +44,11 @@ export default {
             });
         },
         getSection(sectionId) {
-            return axios.get(`http://localhost:8003/api/v1/sections/${sectionId}/`).then(resp => resp.data);
+            const config = { params: { step_id: this.step.id } };
+
+            return axios
+                .get(`http://localhost:8003/api/v1/sections/${sectionId}/`, config)
+                .then(resp => resp.data);
         }
     },
     beforeMount() {

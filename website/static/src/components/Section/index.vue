@@ -37,7 +37,10 @@ export default {
             });
         },
         getQuestion(questionId) {
-            return axios.get(`http://localhost:8003/api/v1/questions/${questionId}/`).then(resp => resp.data);
+            const config = { params: { section_id: this.section.id }}
+
+            return axios.get(`http://localhost:8003/api/v1/questions/${questionId}/`, config)
+                .then(resp => resp.data);
         }
     },
     props: {
