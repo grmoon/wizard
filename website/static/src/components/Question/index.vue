@@ -71,7 +71,7 @@ export default {
         }
     },
     methods: {
-        ...mapMutations(['addAnswer']),
+        ...mapMutations(['addAnswer', 'removeAnswer']),
         initialize() {
             this.getAnswer().then(this.getTriggers);
         },
@@ -127,6 +127,9 @@ export default {
     },
     beforeMount() {
         this.initialize();
+    },
+    destroyed() {
+        this.removeAnswer(this.question.id);
     },
 };
 </script>

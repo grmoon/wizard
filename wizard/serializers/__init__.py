@@ -2,6 +2,7 @@ from wizard.serializers.answer import AnswerSerializer
 from wizard.serializers.fields import (
     OptionSerializer,
     RadioButtonFieldSerializer,
+    TextFieldSerializer,
 )
 from wizard.serializers.through import (
     RadioButtonFieldOptionSerializer,
@@ -25,6 +26,7 @@ __all__ = (
     'SectionSerializer',
     'StepSectionSerializer',
     'StepSerializer',
+    'TextFieldSerializer',
     'TriggerSerializer',
     'WizardSerializer',
     'WizardStepSerializer',

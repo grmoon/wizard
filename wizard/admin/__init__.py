@@ -10,6 +10,7 @@ from wizard.models import (
     Option,
     Section,
     Step,
+    TextField,
     Trigger,
     Wizard,
 )
@@ -24,5 +25,6 @@ admin.site.register(RadioButtonField, RadioButtonFieldAdmin)
 admin.site.register(Option)
 admin.site.register(Section, SectionAdmin)
 admin.site.register(Step, StepAdmin)
+admin.site.register(TextField)
 admin.site.register(Trigger)
 admin.site.register(Wizard, WizardAdmin)

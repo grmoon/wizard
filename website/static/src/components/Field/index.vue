@@ -8,13 +8,15 @@
 
 <script>
 import RadioButtonField from '@components/RadioButtonField';
+import TextField from '@components/TextField';
 
 export default {
     components: { RadioButtonField },
     computed: {
         component() {
             return {
-                'radiobuttonfield': RadioButtonField
+                'radiobuttonfield': RadioButtonField,
+                'textfield': TextField,
             }[this.fieldClass]
         }
     },

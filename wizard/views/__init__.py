@@ -2,6 +2,7 @@ from wizard.views.answer import AnswerViewSet
 from wizard.views.fields import (
     OptionViewSet,
     RadioButtonFieldViewSet,
+    TextFieldViewSet,
 )
 from wizard.views.through import (
     RadioButtonFieldOptionViewSet,
@@ -27,6 +28,7 @@ __all__ = (
     'SectionViewSet',
     'StepSectionViewSet',
     'StepViewSet',
+    'TextFieldViewSet',
     'TriggerViewSet',
     'WizardStepViewSet',
     'WizardViewSet',

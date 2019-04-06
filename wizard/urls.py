@@ -10,6 +10,7 @@ from wizard.views import (
     SectionViewSet,
     StepSectionViewSet,
     StepViewSet,
+    TextFieldViewSet,
     TriggerViewSet,
     WizardStepViewSet,
     WizardViewSet,
@@ -26,6 +27,7 @@ router.register('section_questions', SectionQuestionViewSet, basename='section_q
 router.register('sections', SectionViewSet, basename='section')
 router.register('step_sections', StepSectionViewSet, basename='step_section')
 router.register('steps', StepViewSet, basename='step')
+router.register('text_fields', TextFieldViewSet, basename='text_field')
 router.register('triggers', TriggerViewSet, basename='trigger')
 router.register('wizard_steps', WizardStepViewSet, basename='wizard_step')
 router.register('wizards', WizardViewSet, basename='wizard')
