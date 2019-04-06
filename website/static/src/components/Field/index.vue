@@ -1,8 +1,6 @@
 <template>
     <component
-        @activate='component_onActivate'
-        @deactivate='component_onDeactivate'
-        :answer='answer'
+        :question-id='questionId'
         :id='id'
         :is='component'
     />
@@ -13,14 +11,6 @@ import RadioButtonField from '@components/RadioButtonField';
 
 export default {
     components: { RadioButtonField },
-    methods: {
-        component_onActivate(triggerIds) {
-            this.$emit('activate', triggerIds);
-        },
-        component_onDeactivate(triggerIds) {
-            this.$emit('deactivate', triggerIds);
-        }
-    },
     computed: {
         component() {
             return {
@@ -29,9 +19,9 @@ export default {
         }
     },
     props: {
-        answer: {
+        questionId: {
             required: true,
-            type: Object
+            type: Number
         },
         fieldClass: {
             required: true,

@@ -18,9 +18,7 @@ label {
 <script>
 import axios from 'axios';
 import Option from '@components/Option';
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapState, mapMutations } = createNamespacedHelpers('triggers');
+import { mapState, mapMutations } from 'vuex';
 
 export default {
     components: { Option },
@@ -33,70 +31,29 @@ export default {
             required: true,
             type: String
         },
-        selectedValue: {
-            required: true
+        questionId: {
+            required: true,
+            type: Number
         }
     },
     computed: {
         ...mapState({
-            triggers({ triggers }) {
-                return this.option.triggers.map(triggerId => triggers[triggerId]);
+            answer({ answers }) {
+                return answers[this.questionId];
             }
         }),
         checked() {
-            return this.selectedValue == this.option.value;
+            return this.answer.value == this.option.value;
         }
     },
     methods: {
-        ...mapMutations(['addTrigger']),
+        ...mapMutations(['setAnswerValue']),
         option_onChange(event) {
-            const payload = {
-                triggerIds: this.option.triggers,
-                value: this.option.value
-            };
-
-            this.$emit('activate', payload);
-        },
-        getTriggers() {
-            const self = this;
-            const promises = this.option.triggers.map(this.getTrigger);
-
-            Promise.all(promises).then((triggers) => {
-                triggers.forEach((trigger) => {
-                    const payload = {
-                        fieldName: this.name,
-                        trigger: {
-                            ...trigger,
-                            active: this.checked,
-                        }
-                    }
-
-                    this.addTrigger(payload);
-                });
+            this.setAnswerValue({
+                questionId: this.questionId,
+                value: event.currentTarget.value
             });
-        },
-        getTrigger(triggerId) {
-            return axios.get(`http://localhost:8003/api/v1/triggers/${triggerId}/`)
-                .then((resp) => {
-                    const trigger = resp.data
-
-                    return this.attachQuestionToTrigger(trigger);
-                });
-        },
-        attachQuestionToTrigger(trigger) {
-            return this.getQuestion(trigger.question).then((question) => {
-                return {
-                    ...trigger,
-                    question,
-                }
-            });
-        },
-        getQuestion(questionId) {
-            return axios.get(`http://localhost:8003/api/v1/questions/${questionId}/`).then(resp => resp.data);
         }
-    },
-    beforeMount() {
-        this.getTriggers();
     }
 };
 </script>

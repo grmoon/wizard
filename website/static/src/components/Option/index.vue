@@ -1,6 +1,6 @@
 <template>
     <label>{{ label }}&nbsp;<input
-        @change='input_onChange'
+        @input='input_onChange'
         :checked='checked'
         :name='name'
         :type='type'

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
+from wizard.admin.through import SectionQuestionInline
 from wizard.models import SectionQuestion
-from wizard.admin.section_question import SectionQuestionInline
 
 
 class SectionAdmin(admin.ModelAdmin):

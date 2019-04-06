@@ -5,18 +5,16 @@
     >
         <h4>{{ question.text }}</h4>
         <Field
-            @activate='field_onActivate'
-            @deactivate='field_onDeactivate'
-            :answer='answer'
-            :fieldClass='question.field_class'
+            :question-id='question.id'
+            :field-class='question.field_class'
             :id='question.field'
         />
         <div
-            v-if='triggers.length > 0'
+            v-if='activeTriggers.length > 0'
             class='subquestions'
         >
             <Question
-                v-for='(trigger, index) in triggers'
+                v-for='(trigger, index) in activeTriggers'
                 :key='index'
                 :question='trigger.question'
             />
@@ -27,53 +25,21 @@
 <script>
 import axios from 'axios';
 import Field from '@components/Field';
-import { createNamespacedHelpers } from 'vuex';
-
-const {
-    mapState: mapTriggerState,
-    mapMutations: mapTriggerMutations
-} = createNamespacedHelpers('triggers');
-const { mapState: mapFieldState } = createNamespacedHelpers('fields');
+import sortByPosition from '@utils/sortByPosition';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
     components: { Field },
     name: 'Question',
     data() {
         return {
-            answer: undefined
+            triggers: undefined
         }
     },
     computed: {
-        ...mapFieldState({
-            field({ fields }) {
-                return fields[this.question.field];
-            }
-        }),
-        ...mapTriggerState({
-            triggers({ triggers: allTriggers, triggersByFieldName }) {
-                let triggerIds;
-
-                if (this.field === undefined) {
-                    triggerIds = []
-                }
-                else {
-                    triggerIds = triggersByFieldName[this.field.name];
-                }
-
-                let triggers;
-
-                if (triggerIds === undefined) {
-                    triggers = []
-                }
-                else {
-                    triggers = triggerIds.map(triggerId => allTriggers[triggerId]);
-                }
-
-                return triggers.filter(trigger => trigger.active);
-            }
-        }),
         initialized() {
-            return this.answer !== undefined;
+            return this.answer !== undefined &&
+                this.triggers !== undefined;
         }
     },
     props: {
@@ -82,33 +48,85 @@ export default {
             type: Object
         }
     },
-    methods: {
-        ...mapTriggerMutations(['activate', 'deactivate']),
-        field_onActivate(triggerIds) {
-            triggerIds.forEach(this.activate);
+    computed: {
+        ...mapState({
+            answer({ answers }) {
+                return answers[this.question.id];
+            }
+        }),
+        activeTriggers() {
+            const self = this;
+
+            const activeTriggers = this.triggers.filter((trigger) => {
+                return trigger.value == self.answer.value;
+            });
+
+            activeTriggers.sort(sortByPosition);
+
+            return activeTriggers;
         },
-        field_onDeactivate(triggerIds) {
-            triggerIds.forEach(this.deactivate);
+        initialized() {
+            return this.triggers !== undefined &&
+                this.answer !== undefined;
+        }
+    },
+    methods: {
+        ...mapMutations(['addAnswer']),
+        initialize() {
+            this.getAnswer().then(this.getTriggers);
+        },
+        getTriggers() {
+            const self = this;
+            const promises = this.question.triggers.map(this.getTrigger);
+
+            Promise.all(promises).then((triggers) => {
+                self.triggers = triggers;
+            });
+        },
+        getTrigger(triggerId) {
+            const self = this;
+
+            return axios.get(`http://localhost:8003/api/v1/triggers/${triggerId}/`).then(({ data: trigger }) => {
+                return self.attachQuestionToTrigger(trigger);
+            });
+        },
+        attachQuestionToTrigger(trigger) {
+            return this.getQuestion(trigger.to_question).then((question) => {
+                return {
+                    ...trigger,
+                    question
+                }
+            })
+        },
+        getQuestion(questionId) {
+            return axios.get(`http://localhost:8003/api/v1/questions/${questionId}/`).then(resp => resp.data);
         },
         getAnswer() {
             const self = this;
+            let promise;
 
             if (this.question.answer === null) {
-                self.answer = {
-                    question: this.question.id,
-                    value: null
-                }
+                promise = new Promise((resolve) => {
+                    resolve({
+                        question: this.question.id,
+                        value: null
+                    });
+                });
             }
             else {
-                axios.get(`http://localhost:8003/api/v1/answers/${this.question.answer}/`)
-                    .then((resp) => {
-                        self.answer = resp.data;
-                    });
+                promise = axios.get(`http://localhost:8003/api/v1/answers/${this.question.answer}/`).then(resp => resp.data);
             }
+
+            return promise.then((answer) => {
+                self.addAnswer({
+                    answer,
+                    questionId: self.question.id
+                });
+            });
         }
     },
     beforeMount() {
-        this.getAnswer();
+        this.initialize();
     },
 };
 </script>

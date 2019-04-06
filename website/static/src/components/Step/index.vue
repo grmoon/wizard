@@ -12,6 +12,7 @@
 <script>
 import axios from 'axios';
 import Section from '@components/Section';
+import sortByPosition from '@utils/sortByPosition';
 
 export default {
     components: { Section },
@@ -37,16 +38,13 @@ export default {
             const promises = this.step.sections.map(this.getSection);
 
             Promise.all(promises).then((sections) => {
-                sections.sort((section1, section2) => {
-                    return section1.position - section2.position;
-                });
+                sections.sort(sortByPosition);
 
                 self.sections = sections
             });
         },
         getSection(sectionId) {
-            return axios.get(`http://localhost:8003/api/v1/sections/${sectionId}/`)
-                .then(resp => resp.data);
+            return axios.get(`http://localhost:8003/api/v1/sections/${sectionId}/`).then(resp => resp.data);
         }
     },
     beforeMount() {
