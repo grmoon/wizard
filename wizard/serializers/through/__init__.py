@@ -2,10 +2,12 @@ from wizard.serializers.through.radio_button_field_option import RadioButtonFiel
 from wizard.serializers.through.section_question import SectionQuestionSerializer
 from wizard.serializers.through.step_section import StepSectionSerializer
 from wizard.serializers.through.wizard_step import WizardStepSerializer
+from wizard.serializers.through.trigger import TriggerSerializer
 
 __all__ = (
     'RadioButtonFieldOptionSerializer',
     'SectionQuestionSerializer',
     'StepSectionSerializer',
+    'TriggerSerializer',
     'WizardStepSerializer',
 )
