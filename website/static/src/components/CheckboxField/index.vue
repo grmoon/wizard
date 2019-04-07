@@ -4,8 +4,9 @@
             v-for='(option, index) in options'
             :key='index'
             :name='field.name'
-            :option='option'
+            :option='option.option'
             :answer='answer'
+            :exclusiveValues='exclusiveValues'
         />
     </div>
 </template>
@@ -16,6 +17,17 @@ import { mapState } from 'vuex';
 
 export default {
     components: { CheckboxOption },
+    computed: {
+        exclusiveValues() {
+            return this.options.reduce((acc, option) => {
+                if (option.exclusive) {
+                    acc.push(option.option.value)
+                }
+
+                return acc
+            }, []);
+        }
+    },
     props: {
         answer: {
             required: true,

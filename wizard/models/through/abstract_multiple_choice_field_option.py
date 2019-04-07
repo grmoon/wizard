@@ -10,8 +10,7 @@ class AbstractMultipleChoiceFieldOption(MultipleChoiceFieldOption):
     class Meta:
         abstract = True
         unique_together = (
-            ('position', 'field'),
-            ('field', 'option'),
+            ('position', 'field', 'option'),
         )
 
     def __str__(self):

@@ -10,30 +10,28 @@
 <script>
 import CheckboxField from '@components/CheckboxField';
 import RadioButtonField from '@components/RadioButtonField';
+import sortByPosition from '@utils/sortByPosition';
 import { mapState } from 'vuex';
 
 export default {
     computed: {
         ...mapState({
             options({ multipleChoiceFieldOptions, options }) {
-                const _multipleChoiceFieldOptions = {};
                 const _options = this.field.options.reduce((acc, multipleChoiceFieldOptionId) => {
                     const multipleChoiceFieldOption = multipleChoiceFieldOptions[multipleChoiceFieldOptionId];
-                    const optionId = multipleChoiceFieldOption.option;
-                    const option = options[optionId];
+                    const option = options[multipleChoiceFieldOption.option];
 
-                    _multipleChoiceFieldOptions[optionId] = multipleChoiceFieldOption;
-                    acc.push(option);
+                    const augmentedOption = {
+                        ...multipleChoiceFieldOption,
+                        option
+                    }
+
+                    acc.push(augmentedOption);
 
                     return acc;
                 }, []);
 
-                _options.sort((option1, option2) => {
-                    const pos1 = _multipleChoiceFieldOptions[option1.id].position;
-                    const pos2 = _multipleChoiceFieldOptions[option2.id].position;
-
-                    return pos1 - pos2;
-                });
+                _options.sort(sortByPosition);
 
                 return _options;
             }

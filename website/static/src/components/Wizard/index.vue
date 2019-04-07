@@ -22,7 +22,7 @@
 import axios from 'axios';
 import Step from '@components/Step';
 import sortByPosition from '@utils/sortByPosition';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default {
     components: { Step },
@@ -84,7 +84,9 @@ export default {
     },
     methods: {
         ...mapActions(['getWizardStep']),
+        ...mapMutations(['resetState']),
         initialize() {
+            this.resetState();
             this.initialized = false;
 
             const params = {

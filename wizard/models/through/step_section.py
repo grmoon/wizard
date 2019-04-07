@@ -8,8 +8,7 @@ class StepSection(models.Model):
 
     class Meta:
         unique_together = (
-            ('position', 'step'),
-            ('section', 'step'),
+            ('position', 'step', 'section'),
         )
 
     def __str__(self):

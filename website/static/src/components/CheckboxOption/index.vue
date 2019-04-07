@@ -27,9 +27,16 @@ export default {
         answer: {
             required: true,
             type: Object
-        }
+        },
+        exclusiveValues: {
+            required: true,
+            type: Array
+        },
     },
     computed: {
+        exclusive() {
+            return this.exclusiveValues.includes(this.option.value);
+        },
         checked() {
             return this.answerValue.includes(this.option.value);
         },
@@ -40,14 +47,27 @@ export default {
     methods: {
         ...mapMutations(['setAnswerValue']),
         option_onChange(event) {
-            const value = Array.from(this.answerValue);
+            let value = Array.from(this.answerValue);
             const currentTargetValue = event.currentTarget.value;
 
             if (event.currentTarget.checked) {
-                value.push(currentTargetValue);
+                if (this.exclusive) {
+                    value = [currentTargetValue];
+                }
+                else {
+                    this.exclusiveValues.forEach((exclusiveValue) => {
+                        const index = value.indexOf(exclusiveValue);
+
+                        if (index !== -1) {
+                            value.splice(index, 1);
+                        }
+                    });
+
+                    value.push(currentTargetValue);
+                }
             }
             else {
-                const index = value.index(currentTargetValue);
+                const index = value.indexOf(currentTargetValue);
 
                 if (index > -1) {
                     value.splice(index, 1);

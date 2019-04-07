@@ -4,7 +4,7 @@
             v-for='(option, index) in options'
             :key='index'
             :name='field.name'
-            :option='option'
+            :option='option.option'
             :answer='answer'
         />
     </div>

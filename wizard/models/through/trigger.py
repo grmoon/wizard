@@ -4,11 +4,28 @@ from django.db import models
 
 
 class Trigger(models.Model):
+    CONDITION_E = 'E'
+    CONDITION_GT = 'GT'
+    CONDITION_GTE = 'GTE'
+    CONDITION_IN = 'IN'
+    CONDITION_LT = 'LT'
+    CONDITION_LTE = 'LTE'
+
+    CONDITIONS = (
+        (CONDITION_E, 'Value == Answer'),
+        (CONDITION_GT, 'Value > Answer'),
+        (CONDITION_GTE, 'Value >= Answer'),
+        (CONDITION_LT, 'Value < Answer'),
+        (CONDITION_LTE, 'Value <= Answer'),
+        (CONDITION_IN, 'Value in Answer'),
+    )
+
     from_question = models.ForeignKey(
         'wizard.Question',
         on_delete=models.CASCADE
     )
     position = models.PositiveIntegerField()
+    condition = models.CharField(max_length=256, choices=CONDITIONS, default=CONDITION_E)
     to_question = models.ForeignKey(
         'wizard.Question',
         on_delete=models.CASCADE,
@@ -18,8 +35,8 @@ class Trigger(models.Model):
 
     class Meta:
         unique_together = (
-            ('position', 'from_question'),
-            ('to_question', 'from_question', 'value'),
+            ('position', 'from_question', 'to_question'),
+            ('to_question', 'from_question', 'value', 'condition'),
         )
 
         constraints = [

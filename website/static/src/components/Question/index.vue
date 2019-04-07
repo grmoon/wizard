@@ -19,10 +19,10 @@
 </template>
 
 <script>
-import axios from 'axios';
 import Field from '@components/Field';
 import sortByPosition from '@utils/sortByPosition';
-import { mapState, mapMutations } from 'vuex';
+import checkTrigger from '@utils/checkTrigger';
+import { mapState } from 'vuex';
 
 export default {
     components: { Field },
@@ -60,7 +60,7 @@ export default {
             const self = this;
 
             const activeTriggers = this.triggers.filter((trigger) => {
-                return trigger.value == self.answer.value;
+                return checkTrigger(trigger, self.answer);
             });
 
             return activeTriggers;

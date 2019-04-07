@@ -5,9 +5,8 @@ import sortByPosition from '@utils/sortByPosition';
 
 
 Vue.use(Vuex);
-
-export default new Vuex.Store({
-    state: {
+function defaultState() {
+    return {
         answers: {},
         fields: {},
         multipleChoiceFieldOptions: {},
@@ -19,7 +18,11 @@ export default new Vuex.Store({
         stepSections: undefined,
         triggers: {},
         wizardStep: undefined,
-    },
+    }
+};
+
+export default new Vuex.Store({
+    state: defaultState(),
     actions: {
         get({ }, { url, config={} }) {
             return axios.get(url, config).then(resp => resp.data);
@@ -49,9 +52,15 @@ export default new Vuex.Store({
             });
         },
         getStepSections({ commit, dispatch }, stepSectionIds) {
+            const stepSectionIdArray = Array.from(stepSectionIds);
+
+            if(stepSectionIdArray.length === 0) {
+                return new Promise(resolve => resolve([]))
+            }
+
             const url = 'http://localhost:8003/api/v1/step_sections/';
             const config = {
-                params: { ids: Array.from(stepSectionIds) }
+                params: { ids: stepSectionIdArray }
             };
 
             return dispatch('get', { url, config}).then((stepSections) => {
@@ -64,10 +73,16 @@ export default new Vuex.Store({
 
         },
         getSections({ commit, dispatch }, sectionIds) {
+            const sectionIdArray = Array.from(sectionIds);
+
+            if(sectionIdArray.length === 0) {
+                return new Promise(resolve => resolve([]))
+            }
+
             const url = 'http://localhost:8003/api/v1/sections/';
 
             const config = {
-                params: { ids: Array.from(sectionIds) }
+                params: { ids: sectionIdArray }
             };
 
             return dispatch('get', { url, config }).then((sections) => {
@@ -81,10 +96,16 @@ export default new Vuex.Store({
             });
         },
         getSectionQuestions({ commit, dispatch }, sectionQuestionIds) {
+            const sectionQuestionIdArray = Array.from(sectionQuestionIds);
+
+            if(sectionQuestionIdArray.length === 0) {
+                return new Promise(resolve => resolve([]))
+            }
+
             const url = 'http://localhost:8003/api/v1/section_questions/';
 
             const config = {
-                params: { ids: Array.from(sectionQuestionIds) }
+                params: { ids: sectionQuestionIdArray }
             };
 
             return dispatch('get', { url, config }).then((sectionQuestions) => {
@@ -96,7 +117,6 @@ export default new Vuex.Store({
             });
         },
         getQuestions({ commit, dispatch, state }, questionIds) {
-            const url = 'http://localhost:8003/api/v1/questions/';
             const currentQuestionIds = Object.keys(state.questions).map(id => parseInt(id));
             const paramQuestionIds = new Set(Array.from(questionIds).filter((questionId) => {
                 return currentQuestionIds.indexOf(questionId) === -1;
@@ -106,8 +126,7 @@ export default new Vuex.Store({
                 return new Promise(resolve => resolve());
             }
 
-            console.log('making question call');
-
+            const url = 'http://localhost:8003/api/v1/questions/';
             const config = {
                 params: { ids: Array.from(paramQuestionIds) }
             };
@@ -126,14 +145,14 @@ export default new Vuex.Store({
                 return Promise.all([answerPromise, triggerPromise, fieldsPromise]);
             });
         },
-        getAnswers({ commit, dispatch, state }, questionIds) {
-            const url = 'http://localhost:8003/api/v1/answers/';
+        getAnswers({ commit, dispatch}, questionIds) {
             const questionIdArray = Array.from(questionIds);
 
-            if (questionIds.length === 0) {
+            if (questionIdArray.length === 0) {
                 return new Promise(resolve => resolve([]));
             }
 
+            const url = 'http://localhost:8003/api/v1/answers/';
             const config = {
                 params: { question_ids: questionIdArray }
             };
@@ -156,14 +175,15 @@ export default new Vuex.Store({
             });
         },
         getTriggers({ commit, dispatch }, triggerIds) {
-            const url = 'http://localhost:8003/api/v1/triggers/';
+            const triggerIdArray = Array.from(triggerIds);
 
-            if (triggerIds.length == 0) {
+            if (triggerIdArray.length === 0) {
                 return new Promise(resolve => resolve([]));
             }
 
+            const url = 'http://localhost:8003/api/v1/triggers/';
             const config = {
-                params: { ids: Array.from(triggerIds) }
+                params: { ids: triggerIdArray }
             };
 
             return dispatch('get', { url, config }).then((triggers) => {
@@ -175,7 +195,6 @@ export default new Vuex.Store({
             });
         },
         getFields({ commit, dispatch, state }, fieldIds) {
-            const url = 'http://localhost:8003/api/v1/fields/';
             const currentFieldIds = Object.keys(state.fields).map(id => parseInt(id));
             const paramFieldIds = new Set(Array.from(fieldIds).filter((fieldId) => {
                 return currentFieldIds.indexOf(fieldId) === -1;
@@ -185,6 +204,7 @@ export default new Vuex.Store({
                 return new Promise(resolve => resolve());
             }
 
+            const url = 'http://localhost:8003/api/v1/fields/';
             const config = {
                 params: { ids: Array.from(paramFieldIds) }
             };
@@ -200,7 +220,6 @@ export default new Vuex.Store({
             });
         },
         getMultipleChoiceFieldOptions({ commit, dispatch, state }, multipleChoiceFieldMultipleChoiceFieldOptionIds) {
-            const url = 'http://localhost:8003/api/v1/multiple_choice_field_options/';
             const currentMultipleChoiceFieldOptionIds = Object.keys(state.options).map(id => parseInt(id));
             const paramMultipleChoiceFieldOptionIds = new Set(Array.from(multipleChoiceFieldMultipleChoiceFieldOptionIds).filter((multipleChoiceFieldMultipleChoiceFieldOptionId) => {
                 return currentMultipleChoiceFieldOptionIds.indexOf(multipleChoiceFieldMultipleChoiceFieldOptionId) === -1;
@@ -210,6 +229,7 @@ export default new Vuex.Store({
                 return new Promise(resolve => resolve());
             }
 
+            const url = 'http://localhost:8003/api/v1/multiple_choice_field_options/';
             const config = {
                 params: { ids: Array.from(paramMultipleChoiceFieldOptionIds) }
             };
@@ -227,7 +247,6 @@ export default new Vuex.Store({
             });
         },
         getOptions({ commit, dispatch, state }, optionIds) {
-            const url = 'http://localhost:8003/api/v1/options/';
             const currentOptionIds = Object.keys(state.options).map(id => parseInt(id));
             const paramOptionIds = new Set(Array.from(optionIds).filter((optionId) => {
                 return currentOptionIds.indexOf(optionId) === -1;
@@ -237,6 +256,7 @@ export default new Vuex.Store({
                 return new Promise(resolve => resolve());
             }
 
+            const url = 'http://localhost:8003/api/v1/options/';
             const config = {
                 params: { ids: Array.from(paramOptionIds) }
             };
@@ -325,5 +345,8 @@ export default new Vuex.Store({
         setAnswerValue(state, { questionId, value }) {
             Vue.set(state.answers[questionId], 'value', value);
         },
+        resetState(state) {
+            Object.assign(state, defaultState());
+        }
     }
 });
