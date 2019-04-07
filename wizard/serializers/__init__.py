@@ -1,11 +1,15 @@
 from wizard.serializers.answer import AnswerSerializer
 from wizard.serializers.fields import (
+    FieldSerializer,
     OptionSerializer,
+    CheckboxFieldSerializer,
     RadioButtonFieldSerializer,
     TextFieldSerializer,
 )
 from wizard.serializers.through import (
+    MultipleChoiceFieldOptionSerializer,
     RadioButtonFieldOptionSerializer,
+    CheckboxFieldOptionSerializer,
     SectionQuestionSerializer,
     StepSectionSerializer,
     TriggerSerializer,
@@ -18,6 +22,10 @@ from wizard.serializers.wizard import WizardSerializer
 
 __all__ = (
     'AnswerSerializer',
+    'CheckboxFieldOptionSerializer',
+    'CheckboxFieldSerializer',
+    'FieldSerializer',
+    'MultipleChoiceFieldOptionSerializer',
     'OptionSerializer',
     'QuestionSerializer',
     'RadioButtonFieldOptionSerializer',

@@ -8,6 +8,12 @@
     /></label>
 </template>
 
+<style>
+label {
+    display: block;
+}
+</style>
+
 <script>
 export default {
     methods: {

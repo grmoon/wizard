@@ -1,6 +1,5 @@
 <template>
     <input
-        v-if='initialized'
         v-model='value'
         type='text'
         :required='field.required'
@@ -15,60 +14,32 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { mapState, mapMutations } from 'vuex';
+import { mapMutations } from 'vuex';
 
 export default {
     props: {
-        id: {
+        answer: {
             required: true,
-            type: Number
+            type: Object
         },
-        questionId: {
+        field: {
             required: true,
-            type: Number
-        }
-    },
-    data() {
-        return {
-            field: undefined
+            type: Object
         }
     },
     computed: {
-        ...mapState({
-            answer({ answers }) {
-                return answers[this.questionId];
-            }
-        }),
         value: {
             get() {
                 return this.answer.value;
             },
             set(value) {
                 this.setAnswerValue({
-                    questionId: this.questionId,
+                    questionId: this.answer.question,
                     value
                 });
             }
-        },
-        initialized() {
-            return this.field !== undefined &&
-                this.answer !== undefined;
         }
     },
-    methods: {
-        ...mapMutations(['setAnswerValue']),
-        getField() {
-            const self = this;
-
-            return axios.get(`http://localhost:8003/api/v1/text_fields/${this.id}/`)
-                .then(({ data: field }) => {
-                    self.field = field;
-                });
-        },
-    },
-    beforeMount() {
-        this.getField();
-    }
+    methods: mapMutations(['setAnswerValue'])
 }
 </script>

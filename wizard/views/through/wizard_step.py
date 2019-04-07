@@ -10,13 +10,6 @@ class WizardStepViewSet(viewsets.ModelViewSet):
     queryset = WizardStep.objects.all()
     serializer_class = WizardStepSerializer
 
-    # def list(self, *args, **kwargs):
-    #     wizard_id = self.request.query_params.get('wizard_id')
-
-    #     import pdb
-    #     pdb.set_trace()
-    #     return super().list(*args, **kwargs)
-
     def _get_step_for_wizard(self, wizard_id, step_num):
         try:
             step = self.queryset\
