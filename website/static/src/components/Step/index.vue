@@ -32,7 +32,15 @@ export default {
             type: Object
         }
     },
+    watch: {
+        step() {
+            this.initialize();
+        }
+    },
     methods: {
+        initialize() {
+            this.getSections();
+        },
         getSections() {
             const self = this;
             const promises = this.step.sections.map(this.getSection);
@@ -48,7 +56,7 @@ export default {
         }
     },
     beforeMount() {
-        this.getSections();
+        this.initialize();
     }
 }
 </script>
