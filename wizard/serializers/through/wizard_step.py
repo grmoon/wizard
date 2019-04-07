@@ -4,7 +4,6 @@ from wizard.models import WizardStep
 from wizard.serializers.step import StepSerializer
 
 class WizardStepSerializer(serializers.ModelSerializer):
-    step = StepSerializer()
 
     class Meta:
         model = WizardStep

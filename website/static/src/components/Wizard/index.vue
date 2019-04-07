@@ -1,18 +1,20 @@
 <template>
     <div>
         <h1>{{ wizard.name }}</h1>
-        <Step
-            v-if='step'
-            :step='step'
-        />
-        <router-link
-            v-if='hasPreviousStep'
-            :to='previousStep'
-        >Previous</router-link>
-        <router-link
-            v-if='hasNextStep'
-            :to='nextStep'
-        >Next</router-link>
+        <template v-if='initialized'>
+            <Step
+                v-if='step'
+                :step='step'
+            />
+            <router-link
+                v-if='hasPreviousStep'
+                :to='previousStep'
+            >Previous</router-link>
+            <router-link
+                v-if='hasNextStep'
+                :to='nextStep'
+            >Next</router-link>
+        </template>
     </div>
 </template>
 
@@ -20,9 +22,15 @@
 import axios from 'axios';
 import Step from '@components/Step';
 import sortByPosition from '@utils/sortByPosition';
+import { mapActions, mapState } from 'vuex';
 
 export default {
     components: { Step },
+    data() {
+        return {
+            initialized: false
+        }
+    },
     props: {
         stepNum: {
             required: true,
@@ -33,10 +41,8 @@ export default {
             type: Object
         }
     },
-    data() {
-        return { step: undefined };
-    },
     computed: {
+        ...mapState(['step']),
         stepParams() {
             return {
                 name: 'wizard',
@@ -77,23 +83,19 @@ export default {
         }
     },
     methods: {
+        ...mapActions(['getWizardStep']),
         initialize() {
-            return this.getStep().then(this.setStep);
-        },
-        getStep() {
-            const config = {
-                params: {
-                    step_num: this.stepNum,
-                    wizard_id: this.wizard.id
-                }
-            }
-            const url = 'http://localhost:8003/api/v1/wizard_steps/';
+            this.initialized = false;
 
-            return axios.get(url, config).then(resp => resp.data.step);
+            const params = {
+                stepNum: this.stepNum,
+                wizardId: this.wizard.id
+            }
+
+            return this.getWizardStep(params).then(() => {
+                this.initialized = true;
+            });
         },
-        setStep(step) {
-            this.step = step;
-        }
     },
     created() {
         this.initialize();
