@@ -7,15 +7,15 @@
 </template>
 
 <script>
-import RadioButtonField from '@components/RadioButtonField';
+import MultipleChoiceField from '@components/MultipleChoiceField';
 import TextField from '@components/TextField';
 
 export default {
-    components: { RadioButtonField },
     computed: {
         component() {
             return {
-                'RadioButtonField': RadioButtonField,
+                'CheckboxField': MultipleChoiceField,
+                'RadioButtonField': MultipleChoiceField,
                 'TextField': TextField,
             }[this.field.class]
         }

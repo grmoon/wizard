@@ -1,6 +1,6 @@
 <template>
     <div>
-        <RadioButtonOption
+        <CheckboxOption
             v-for='(option, index) in options'
             :key='index'
             :name='field.name'
@@ -11,11 +11,11 @@
 </template>
 
 <script>
-import RadioButtonOption from '@components/RadioButtonOption';
+import CheckboxOption from '@components/CheckboxOption';
 import { mapState } from 'vuex';
 
 export default {
-    components: { RadioButtonOption },
+    components: { CheckboxOption },
     props: {
         answer: {
             required: true,
