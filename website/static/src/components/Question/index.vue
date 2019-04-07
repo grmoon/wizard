@@ -2,9 +2,8 @@
     <div class='question'>
         <h4>{{ question.text }}</h4>
         <Field
-            :question-id='question.id'
-            :field-class='question.field_class'
-            :id='question.field'
+            :answer='answer'
+            :field='field'
         />
         <div
             v-if='activeTriggers.length > 0'
@@ -39,8 +38,11 @@ export default {
             answer({ answers }) {
                 return answers[this.question.id];
             },
+            field({ fields }) {
+                return fields[this.question.field];
+            },
             triggers({ questions, triggers }) {
-                return (triggers[this.question.id] || []).map((trigger) => {
+                const _triggers = (triggers[this.question.id] || []).map((trigger) => {
                     const question = questions[trigger.to_question];
 
                     return {
@@ -48,6 +50,10 @@ export default {
                         question
                     }
                 });
+
+                _triggers.sort(sortByPosition);
+
+                return _triggers;
             }
         }),
         activeTriggers() {

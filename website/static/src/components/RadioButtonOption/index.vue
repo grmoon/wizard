@@ -31,17 +31,12 @@ export default {
             required: true,
             type: String
         },
-        questionId: {
+        answer: {
             required: true,
-            type: Number
+            type: Object
         }
     },
     computed: {
-        ...mapState({
-            answer({ answers }) {
-                return answers[this.questionId];
-            }
-        }),
         checked() {
             return this.answer.value == this.option.value;
         }
@@ -50,7 +45,7 @@ export default {
         ...mapMutations(['setAnswerValue']),
         option_onChange(event) {
             this.setAnswerValue({
-                questionId: this.questionId,
+                questionId: this.answer.question,
                 value: event.currentTarget.value
             });
         }

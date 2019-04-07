@@ -1,7 +1,7 @@
 <template>
     <component
-        :question-id='questionId'
-        :id='id'
+        :answer='answer'
+        :field='field'
         :is='component'
     />
 </template>
@@ -15,24 +15,20 @@ export default {
     computed: {
         component() {
             return {
-                'radiobuttonfield': RadioButtonField,
-                'textfield': TextField,
-            }[this.fieldClass]
+                'RadioButtonField': RadioButtonField,
+                'TextField': TextField,
+            }[this.field.class]
         }
     },
     props: {
-        questionId: {
+        answer: {
             required: true,
-            type: Number
+            type: Object
         },
-        fieldClass: {
+        field: {
             required: true,
-            type: String
+            type: Object
         },
-        id: {
-            requird: true,
-            type: Number
-        }
     }
 }
 </script>

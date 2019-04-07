@@ -6,11 +6,14 @@ from wizard.models.fields import (
     Option,
     RadioButtonField,
     TextField,
+    CheckboxField,
 )
 from wizard.models.generic import GenericModel
 from wizard.models.question import Question
 from wizard.models.through import (
-    OptionThroughModel,
+    AbstractMultipleChoiceFieldOption,
+    MultipleChoiceFieldOption,
+    CheckboxFieldOption,
     RadioButtonFieldOption,
     SectionQuestion,
     StepSection,
@@ -22,13 +25,15 @@ from wizard.models.step import Step
 from wizard.models.wizard import Wizard
 
 __all__ = (
+    'CheckboxField',
+    'CheckboxFieldOption',
+    'AbstractMultipleChoiceFieldOption',
     'Answer',
     'Field',
     'GenericModel',
     'InputField',
     'MultipleChoiceField',
     'Option',
-    'OptionThroughModel',
     'Question',
     'RadioButtonField',
     'RadioButtonFieldOption',
@@ -40,4 +45,5 @@ __all__ = (
     'Trigger',
     'Wizard',
     'WizardStep',
+    'MultipleChoiceFieldOption',
 )

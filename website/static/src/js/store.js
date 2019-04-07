@@ -10,6 +10,7 @@ export default new Vuex.Store({
     state: {
         answers: {},
         fields: {},
+        multipleChoiceFieldOptions: {},
         options: {},
         questions: {},
         sectionQuestions: undefined,
@@ -191,11 +192,38 @@ export default new Vuex.Store({
             return dispatch('get', { url, config }).then((fields) => {
                 commit('addFields', fields);
 
-                const optionIds = fields.reduce((acc, field) => {
-                    return acc.concat(field.options);
+                const multipleChoiceFieldOptionIds = fields.reduce((acc, field) => {
+                    return acc.concat(field.options || []);
                 }, []);
 
-                return dispatch('getOptions', optionIds)
+                return dispatch('getMultipleChoiceFieldOptions', multipleChoiceFieldOptionIds)
+            });
+        },
+        getMultipleChoiceFieldOptions({ commit, dispatch, state }, multipleChoiceFieldMultipleChoiceFieldOptionIds) {
+            const url = 'http://localhost:8003/api/v1/multiple_choice_field_options/';
+            const currentMultipleChoiceFieldOptionIds = Object.keys(state.options).map(id => parseInt(id));
+            const paramMultipleChoiceFieldOptionIds = new Set(Array.from(multipleChoiceFieldMultipleChoiceFieldOptionIds).filter((multipleChoiceFieldMultipleChoiceFieldOptionId) => {
+                return currentMultipleChoiceFieldOptionIds.indexOf(multipleChoiceFieldMultipleChoiceFieldOptionId) === -1;
+            }));
+
+            if (paramMultipleChoiceFieldOptionIds.size === 0) {
+                return new Promise(resolve => resolve());
+            }
+
+            const config = {
+                params: { ids: Array.from(paramMultipleChoiceFieldOptionIds) }
+            };
+
+            return dispatch('get', { url, config }).then((multipleChoiceFieldOptions) => {
+                commit('addMultipleChoiceOptions', multipleChoiceFieldOptions);
+
+                const optionIds = multipleChoiceFieldOptions.reduce((acc, multipleChoiceFieldOption) => {
+                    acc.add(multipleChoiceFieldOption.option);
+
+                    return acc;
+                }, new Set());
+
+                return dispatch('getOptions', optionIds);
             });
         },
         getOptions({ commit, dispatch, state }, optionIds) {
@@ -282,6 +310,11 @@ export default new Vuex.Store({
         addFields(state, fields) {
             fields.forEach((field) => {
                 Vue.set(state.fields, field.id, field);
+            });
+        },
+        addMultipleChoiceOptions(state, multipleChoiceFieldOptions) {
+            multipleChoiceFieldOptions.forEach((multipleChoiceFieldOption) => {
+                Vue.set(state.multipleChoiceFieldOptions, multipleChoiceFieldOption.id, multipleChoiceFieldOption);
             });
         },
         addOptions(state, options) {

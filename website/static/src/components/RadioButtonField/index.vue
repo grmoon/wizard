@@ -1,11 +1,11 @@
 <template>
-    <div v-if='initialized'>
+    <div>
         <RadioButtonOption
             v-for='(option, index) in options'
             :key='index'
-            :name='name'
+            :name='field.name'
             :option='option'
-            :question-id='questionId'
+            :answer='answer'
         />
     </div>
 </template>
@@ -17,63 +17,42 @@ import sortByPosition from '@utils/sortByPosition';
 import { mapState } from 'vuex';
 
 export default {
-    methods: {
-        getField() {
-            const self = this;
-
-            return axios.get(`http://localhost:8003/api/v1/radio_button_fields/${this.id}/`)
-                .then(({ data: field }) => {
-                    self.name = field.name;
-
-                    return field;
-                });
-        },
-        getOptions(field) {
-            const self = this;
-            const promises = field.options.map(this.getOption);
-
-            Promise.all(promises).then((options) => {
-                options.sort(sortByPosition);
-
-                self.options = options.map(option => option.option);
-            });
-        },
-        getOption(optionId) {
-            return axios.get(`http://localhost:8003/api/v1/radio_button_field_options/${optionId}/`).then(resp => resp.data);
-        },
-        initialize() {
-            this.getField().then(this.getOptions);
-        }
-    },
     components: { RadioButtonOption },
-    data() {
-        return {
-            name: undefined,
-            options: undefined
-        }
-    },
     computed: {
         ...mapState({
-            answer({ answers }) {
-                return answers[this.questionId];
+            options({ multipleChoiceFieldOptions, options }) {
+                const _multipleChoiceFieldOptions = {};
+                const _options = this.field.options.reduce((acc, multipleChoiceFieldOptionId) => {
+                    const multipleChoiceFieldOption = multipleChoiceFieldOptions[multipleChoiceFieldOptionId];
+                    const optionId = multipleChoiceFieldOption.option;
+                    const option = options[optionId];
+
+                    _multipleChoiceFieldOptions[optionId] = multipleChoiceFieldOption;
+                    acc.push(option);
+
+                    return acc;
+                }, []);
+
+                _options.sort((option1, option2) => {
+                    const pos1 = _multipleChoiceFieldOptions[option1.id].position;
+                    const pos2 = _multipleChoiceFieldOptions[option2.id].position;
+
+                    return pos1 - pos2;
+                });
+
+                return _options;
             }
-        }),
-        initialized() {
-            return this.name !== undefined && this.options !== undefined;
-        },
+        })
     },
     props: {
-        questionId: {
+        field: {
             required: true,
-            type: Number
+            type: Object
         },
-        id: {
+        answer: {
             required: true,
-            type: Number
+            type: Object
         }
-    },
-    beforeMount() {
-        this.initialize();
     }
 };
 </script>
