@@ -1,21 +1,21 @@
 <template>
-    <div class='question'>
-        <h4>{{ question.text }}</h4>
-        <Field
-            :answer='answer'
-            :field='field'
-        />
-        <div
-            v-if='activeTriggers.length > 0'
-            class='subquestions'
-        >
-            <Question
-                v-for='(trigger, index) in activeTriggers'
-                :key='index'
-                :question='trigger.question'
-            />
-        </div>
+  <div class="question">
+    <h4>{{ question.text }}</h4>
+    <Field
+      :answer="answer"
+      :field="field"
+    />
+    <div
+      v-if="activeTriggers.length > 0"
+      class="subquestions"
+    >
+      <Question
+        v-for="(trigger, index) in activeTriggers"
+        :key="index"
+        :question="trigger.question"
+      />
     </div>
+  </div>
 </template>
 
 <script>
@@ -25,8 +25,8 @@ import checkTrigger from '@utils/checkTrigger';
 import { mapState } from 'vuex';
 
 export default {
-    components: { Field },
     name: 'Question',
+    components: { Field },
     props: {
         question: {
             required: true,

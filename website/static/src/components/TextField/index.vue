@@ -1,16 +1,16 @@
 <template>
-    <input
-        v-model='value'
-        type='text'
-        :required='field.required'
-        :maxlength='field.maxlength'
-        :minlength='field.minlength'
-        :pattern='field.pattern'
-        :placeholder='field.placeholder'
-        :readonly='field.readonly'
-        :size='field.size'
-        :spellcheck='field.spellcheck'
-    />
+  <input
+    v-model="value"
+    type="text"
+    :required="field.required"
+    :maxlength="field.maxlength"
+    :minlength="field.minlength"
+    :pattern="field.pattern"
+    :placeholder="field.placeholder"
+    :readonly="field.readonly"
+    :size="field.size"
+    :spellcheck="field.spellcheck"
+  >
 </template>
 
 <script>

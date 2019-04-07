@@ -1,36 +1,33 @@
 <template>
-    <div>
-        <h1>{{ wizard.name }}</h1>
-        <template v-if='initialized'>
-            <Step
-                v-if='step'
-                :step='step'
-            />
-            <router-link
-                v-if='hasPreviousStep'
-                :to='previousStep'
-            >Previous</router-link>
-            <router-link
-                v-if='hasNextStep'
-                :to='nextStep'
-            >Next</router-link>
-        </template>
-    </div>
+  <div>
+    <h1>{{ wizard.name }}</h1>
+    <template v-if="initialized">
+      <Step
+        v-if="step"
+        :step="step"
+      />
+      <router-link
+        v-if="hasPreviousStep"
+        :to="previousStep"
+      >
+        Previous
+      </router-link>
+      <router-link
+        v-if="hasNextStep"
+        :to="nextStep"
+      >
+        Next
+      </router-link>
+    </template>
+  </div>
 </template>
 
 <script>
-import axios from 'axios';
 import Step from '@components/Step';
-import sortByPosition from '@utils/sortByPosition';
 import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default {
     components: { Step },
-    data() {
-        return {
-            initialized: false
-        }
-    },
     props: {
         stepNum: {
             required: true,
@@ -39,6 +36,11 @@ export default {
         wizard: {
             required: true,
             type: Object
+        }
+    },
+    data() {
+        return {
+            initialized: false
         }
     },
     computed: {
@@ -82,6 +84,9 @@ export default {
             this.initialize();
         }
     },
+    created() {
+        this.initialize();
+    },
     methods: {
         ...mapActions(['getWizardStep']),
         ...mapMutations(['resetState']),
@@ -98,9 +103,6 @@ export default {
                 this.initialized = true;
             });
         },
-    },
-    created() {
-        this.initialize();
     }
 }
 </script>

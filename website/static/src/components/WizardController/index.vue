@@ -1,9 +1,9 @@
 <template>
-    <Wizard
-        v-if='wizard'
-        :step-num='stepNum'
-        :wizard='wizard'
-    />
+  <Wizard
+    v-if="wizard"
+    :step-num="stepNum"
+    :wizard="wizard"
+  />
 </template>
 
 <script>
@@ -30,6 +30,9 @@ export default {
             }
         }
     },
+    created() {
+        this.initialize();
+    },
     methods: {
         getWizard(wizardId) {
             const url = `http://localhost:8003/api/v1/wizards/${wizardId}/`;
@@ -44,9 +47,6 @@ export default {
 
             this.getWizard(wizardId).then(this.setWizard);
         }
-    },
-    created() {
-        this.initialize();
     },
 }
 </script>

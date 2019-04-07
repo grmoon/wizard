@@ -1,12 +1,12 @@
 <template>
-    <Option
-        @change='option_onChange'
-        type='radio'
-        :checked='checked'
-        :label='option.label'
-        :name='name'
-        :value='option.value'
-    />
+  <Option
+    type="radio"
+    :checked="checked"
+    :label="option.label"
+    :name="name"
+    :value="option.value"
+    @change="option_onChange"
+  />
 </template>
 
 <script>

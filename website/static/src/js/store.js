@@ -19,12 +19,12 @@ function defaultState() {
         triggers: {},
         wizardStep: undefined,
     }
-};
+}
 
 export default new Vuex.Store({
     state: defaultState(),
     actions: {
-        get({ }, { url, config={} }) {
+        get(store, { url, config={} }) {
             return axios.get(url, config).then(resp => resp.data);
         },
         getWizardStep({ commit, dispatch }, { stepNum, wizardId }) {

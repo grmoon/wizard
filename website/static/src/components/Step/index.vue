@@ -1,14 +1,14 @@
 <template>
-    <div>
-        <h2>{{ step.name }}</h2>
-        <template v-if='sections'>
-            <Section
-                v-for='(section, index) in sections'
-                :section='section'
-                :key='index'
-            />
-        </template>
-    </div>
+  <div>
+    <h2>{{ step.name }}</h2>
+    <template v-if="sections">
+      <Section
+        v-for="(section, index) in sections"
+        :key="index"
+        :section="section"
+      />
+    </template>
+  </div>
 </template>
 
 <script>
@@ -17,12 +17,12 @@ import { mapState} from 'vuex';
 
 export default {
     components: { Section },
-    computed: mapState(['sections']),
     props: {
         step: {
             required: true,
             type: Object
         }
-    }
+    },
+    computed: mapState(['sections'])
 }
 </script>

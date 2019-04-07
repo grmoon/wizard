@@ -1,12 +1,12 @@
 <template>
-    <div>
-        <h3>{{ section.name }}</h3>
-        <Question
-            v-for='(question, index) in questions'
-            :question='question'
-            :key='index'
-        />
-    </div>
+  <div>
+    <h3>{{ section.name }}</h3>
+    <Question
+      v-for="(question, index) in questions"
+      :key="index"
+      :question="question"
+    />
+  </div>
 </template>
 
 <script>
@@ -15,6 +15,12 @@ import { mapState } from 'vuex';
 
 export default {
     components: { Question },
+    props: {
+        section: {
+            required: true,
+            type: Object
+        }
+    },
     computed: mapState({
         questions({ sectionQuestions, questions }) {
             let _questions;
@@ -31,12 +37,6 @@ export default {
 
             return _questions;
         }
-    }),
-    props: {
-        section: {
-            required: true,
-            type: Object
-        }
-    }
+    })
 }
 </script>
