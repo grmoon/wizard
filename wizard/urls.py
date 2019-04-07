@@ -2,6 +2,7 @@ from rest_framework.routers import DefaultRouter
 
 from wizard.views import (
     AnswerViewSet,
+    FieldViewSet,
     OptionViewSet,
     QuestionViewSet,
     RadioButtonFieldViewSet,
@@ -19,6 +20,7 @@ from wizard.views import (
 router = DefaultRouter()
 
 router.register('answers', AnswerViewSet, basename='answer')
+router.register('fields', FieldViewSet, basename='field')
 router.register('options', OptionViewSet, basename='option')
 router.register('questions', QuestionViewSet, basename='question')
 router.register('radio_button_fields', RadioButtonFieldViewSet, basename='radio_button_field')

@@ -1,5 +1,6 @@
 from wizard.views.answer import AnswerViewSet
 from wizard.views.fields import (
+    FieldViewSet,
     OptionViewSet,
     RadioButtonFieldViewSet,
     TextFieldViewSet,
@@ -18,8 +19,8 @@ from wizard.views.wizard import WizardViewSet
 
 
 __all__ = (
+    'FieldViewSet',
     'AnswerViewSet',
-    'OptionViewSet',
     'OptionViewSet',
     'QuestionViewSet',
     'RadioButtonFieldOptionViewSet',

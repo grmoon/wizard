@@ -9,6 +9,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         answers: {},
+        fields: {},
+        options: {},
         questions: {},
         sectionQuestions: undefined,
         sections: undefined,
@@ -48,13 +50,15 @@ export default new Vuex.Store({
         getStepSections({ commit, dispatch }, stepSectionIds) {
             const url = 'http://localhost:8003/api/v1/step_sections/';
             const config = {
-                params: { ids: stepSectionIds }
+                params: { ids: Array.from(stepSectionIds) }
             };
 
             return dispatch('get', { url, config}).then((stepSections) => {
                 commit('setStepSections', stepSections);
 
-                return dispatch('getSections', stepSections.map(stepSection => stepSection.step));
+                const sectionIds = new Set(stepSections.map(stepSection => stepSection.section));
+
+                return dispatch('getSections', sectionIds);
             });
 
         },
@@ -62,15 +66,15 @@ export default new Vuex.Store({
             const url = 'http://localhost:8003/api/v1/sections/';
 
             const config = {
-                params: { ids: sectionIds }
+                params: { ids: Array.from(sectionIds) }
             };
 
             return dispatch('get', { url, config }).then((sections) => {
                 commit('setSections', sections);
 
-                const sectionQuestionIds = sections.reduce((acc, section) => {
+                const sectionQuestionIds = new Set(sections.reduce((acc, section) => {
                     return acc.concat(section.questions);
-                }, []);
+                }, []));
 
                 return dispatch('getSectionQuestions', sectionQuestionIds);
             });
@@ -79,59 +83,65 @@ export default new Vuex.Store({
             const url = 'http://localhost:8003/api/v1/section_questions/';
 
             const config = {
-                params: { ids: sectionQuestionIds}
+                params: { ids: Array.from(sectionQuestionIds) }
             };
 
             return dispatch('get', { url, config }).then((sectionQuestions) => {
                 commit('setSectionQuestions', sectionQuestions);
 
-                const questionIds = sectionQuestions.map(sectionQuestion => sectionQuestion.question);
+                const questionIds = new Set(sectionQuestions.map(sectionQuestion => sectionQuestion.question));
 
                 return dispatch('getQuestions', questionIds);
             });
         },
         getQuestions({ commit, dispatch, state }, questionIds) {
             const url = 'http://localhost:8003/api/v1/questions/';
-            const currentQuestionIds = Object.keys(state.questions);
-            const paramQuestionIds = questionIds.filter((questionId) => {
+            const currentQuestionIds = Object.keys(state.questions).map(id => parseInt(id));
+            const paramQuestionIds = new Set(Array.from(questionIds).filter((questionId) => {
                 return currentQuestionIds.indexOf(questionId) === -1;
-            });
+            }));
 
-            if (paramQuestionIds.length === 0) {
+            if (paramQuestionIds.size === 0) {
                 return new Promise(resolve => resolve());
             }
 
+            console.log('making question call');
+
             const config = {
-                params: { ids: paramQuestionIds }
+                params: { ids: Array.from(paramQuestionIds) }
             };
 
             return dispatch('get', { url, config }).then((questions) => {
                 commit('addQuestions', questions);
 
-                const questionIds = questions.map(question => question.id);
-                const answerPromise = dispatch('getAnswers', questionIds);
-                const triggerPromise = dispatch('getTriggers', questionIds);
+                const fieldIds = new Set(questions.map(question => question.field));
+                const triggerIds = new Set(questions.reduce((acc, question) => {
+                    return acc.concat(question.triggers);
+                }, []));
+                const answerPromise = dispatch('getAnswers', paramQuestionIds);
+                const triggerPromise = dispatch('getTriggers', triggerIds);
+                const fieldsPromise = dispatch('getFields', fieldIds);
 
-                return Promise.all([answerPromise, triggerPromise]);
+                return Promise.all([answerPromise, triggerPromise, fieldsPromise]);
             });
         },
-        getAnswers({ commit, dispatch }, questionIds) {
+        getAnswers({ commit, dispatch, state }, questionIds) {
             const url = 'http://localhost:8003/api/v1/answers/';
+            const questionIdArray = Array.from(questionIds);
+
+            if (questionIds.length === 0) {
+                return new Promise(resolve => resolve([]));
+            }
 
             const config = {
-                params: { question_ids: questionIds }
+                params: { question_ids: questionIdArray }
             };
 
             return dispatch('get', { url, config }).then((answers) => {
-                const remainingQuestionIds = Array.from(questionIds);
                 const allAnswers = Array.from(answers);
-
-                answers.forEach((answer) => {
-                    const index = remainingQuestionIds.indexOf(answer.question);
-
-                    if (index > -1) {
-                        remainingQuestionIds.splice(index, 1);
-                    }
+                const answerQuestionIds = answers.map(answer => answer.question);
+                const remainingQuestionIds = questionIdArray.filter((questionId) => {
+                    return answerQuestionIds.indexOf(questionId) === -1;
                 });
 
                 remainingQuestionIds.forEach((questionId) => {
@@ -144,25 +154,69 @@ export default new Vuex.Store({
                 commit('addAnswers', allAnswers);
             });
         },
-        getTriggers({ commit, dispatch }, fromQuestionIds) {
-            const url = 'http://localhost:8003/api/v1/triggers';
+        getTriggers({ commit, dispatch }, triggerIds) {
+            const url = 'http://localhost:8003/api/v1/triggers/';
+
+            if (triggerIds.length == 0) {
+                return new Promise(resolve => resolve([]));
+            }
 
             const config = {
-                params: { from_question_ids: fromQuestionIds }
+                params: { ids: Array.from(triggerIds) }
             };
 
             return dispatch('get', { url, config }).then((triggers) => {
-                if (triggers.length === 0) {
-                    return new Promise(resolve => resolve([]));
-                }
-
                 commit('addTriggers', triggers);
 
-                const toQuestionIds = triggers.map(trigger => trigger.to_question);
+                const toQuestionIds = new Set(triggers.map(trigger => trigger.to_question));
 
                 return dispatch('getQuestions', toQuestionIds);
             });
-        }
+        },
+        getFields({ commit, dispatch, state }, fieldIds) {
+            const url = 'http://localhost:8003/api/v1/fields/';
+            const currentFieldIds = Object.keys(state.fields).map(id => parseInt(id));
+            const paramFieldIds = new Set(Array.from(fieldIds).filter((fieldId) => {
+                return currentFieldIds.indexOf(fieldId) === -1;
+            }));
+
+            if (paramFieldIds.size === 0) {
+                return new Promise(resolve => resolve());
+            }
+
+            const config = {
+                params: { ids: Array.from(paramFieldIds) }
+            };
+
+            return dispatch('get', { url, config }).then((fields) => {
+                commit('addFields', fields);
+
+                const optionIds = fields.reduce((acc, field) => {
+                    return acc.concat(field.options);
+                }, []);
+
+                return dispatch('getOptions', optionIds)
+            });
+        },
+        getOptions({ commit, dispatch, state }, optionIds) {
+            const url = 'http://localhost:8003/api/v1/options/';
+            const currentOptionIds = Object.keys(state.options).map(id => parseInt(id));
+            const paramOptionIds = new Set(Array.from(optionIds).filter((optionId) => {
+                return currentOptionIds.indexOf(optionId) === -1;
+            }));
+
+            if (paramOptionIds.size === 0) {
+                return new Promise(resolve => resolve());
+            }
+
+            const config = {
+                params: { ids: Array.from(paramOptionIds) }
+            };
+
+            return dispatch('get', { url, config }).then((options) => {
+                commit('addOptions', options);
+            });
+        },
     },
     mutations: {
         setWizardStep(state, wizardStep) {
@@ -224,6 +278,16 @@ export default new Vuex.Store({
             Object.values(triggersByQuestion).forEach(sortByPosition);
 
             state.triggers = triggersByQuestion;
+        },
+        addFields(state, fields) {
+            fields.forEach((field) => {
+                Vue.set(state.fields, field.id, field);
+            });
+        },
+        addOptions(state, options) {
+            options.forEach((option) => {
+                Vue.set(state.options, option.id, option);
+            });
         },
         setAnswerValue(state, { questionId, value }) {
             Vue.set(state.answers[questionId], 'value', value);

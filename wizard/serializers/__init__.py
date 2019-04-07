@@ -1,5 +1,6 @@
 from wizard.serializers.answer import AnswerSerializer
 from wizard.serializers.fields import (
+    FieldSerializer,
     OptionSerializer,
     RadioButtonFieldSerializer,
     TextFieldSerializer,
@@ -17,6 +18,7 @@ from wizard.serializers.step import StepSerializer
 from wizard.serializers.wizard import WizardSerializer
 
 __all__ = (
+    'FieldSerializer',
     'AnswerSerializer',
     'OptionSerializer',
     'QuestionSerializer',
