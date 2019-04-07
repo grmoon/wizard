@@ -1,11 +1,18 @@
 <template>
-    <div v-if='initialized'>
+    <div>
         <h1>{{ wizard.name }}</h1>
         <Step
-            v-for='(step, index) in steps'
+            v-if='step'
             :step='step'
-            :key='index'
         />
+        <router-link
+            v-if='hasPreviousStep'
+            :to='previousStep'
+        >Previous</router-link>
+        <router-link
+            v-if='hasNextStep'
+            :to='nextStep'
+        >Next</router-link>
     </div>
 </template>
 
@@ -17,41 +24,78 @@ import sortByPosition from '@utils/sortByPosition';
 export default {
     components: { Step },
     props: {
+        stepNum: {
+            required: true,
+            type: Number
+        },
         wizard: {
             required: true,
             type: Object
         }
     },
     data() {
-        return {
-            name: undefined,
-            steps: undefined,
-        }
+        return { step: undefined };
     },
     computed: {
-        initialized() {
-            return this.steps !== undefined;
+        stepParams() {
+            return {
+                name: 'wizard',
+                params: {
+                    wizardId: this.wizard.id
+                }
+            };
+        },
+        nextStep() {
+            return {
+                ...this.stepParams,
+                params: {
+                    stepNum: this.stepNum + 1,
+                }
+            };
+        },
+        previousStep() {
+            return {
+                ...this.stepParams,
+                params: {
+                    stepNum: this.stepNum - 1,
+                }
+            };
+        },
+        hasNextStep() {
+            return this.stepNum < this.wizard.steps.length;
+        },
+        hasPreviousStep() {
+            return this.stepNum > 1;
+        }
+    },
+    watch: {
+        stepNum() {
+            this.initialize();
+        },
+        wizard() {
+            this.initialize();
         }
     },
     methods: {
         initialize() {
-            return this.getSteps();
+            return this.getStep().then(this.setStep);
         },
-        getSteps() {
-            const self = this;
-            const promises = this.wizard.steps.map(this.getStep);
+        getStep() {
+            const config = {
+                params: {
+                    step_num: this.stepNum,
+                    wizard_id: this.wizard.id
+                }
+            }
+            const url = 'http://localhost:8003/api/v1/wizard_steps/';
 
-            Promise.all(promises).then((steps) => {
-                steps.sort(sortByPosition);
-
-                self.steps = steps.map(step => step.step);
-            });
+            return axios.get(url, config).then(resp => resp.data.step);
         },
-        getStep(stepId) {
-            return axios.get(`http://localhost:8003/api/v1/wizard_steps/${stepId}/`).then(resp => resp.data);
+        setStep(step) {
+            this.step = step;
         }
     },
-    beforeMount() {
+    created() {
         this.initialize();
     }
 }

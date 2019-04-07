@@ -8,12 +8,12 @@ from wizard.serializers.through import (
     RadioButtonFieldOptionSerializer,
     SectionQuestionSerializer,
     StepSectionSerializer,
+    TriggerSerializer,
     WizardStepSerializer,
 )
 from wizard.serializers.question import QuestionSerializer
 from wizard.serializers.section import SectionSerializer
 from wizard.serializers.step import StepSerializer
-from wizard.serializers.trigger import TriggerSerializer
 from wizard.serializers.wizard import WizardSerializer
 
 __all__ = (
