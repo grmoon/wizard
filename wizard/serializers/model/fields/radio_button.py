@@ -1,5 +1,5 @@
 from wizard.models import RadioButtonField, RadioButtonFieldOption
-from wizard.serializers.fields.multiple_choice_field import MultipleChoiceFieldSerializer
+from wizard.serializers.model.fields.multiple_choice_field import MultipleChoiceFieldSerializer
 
 class RadioButtonFieldSerializer(MultipleChoiceFieldSerializer):
     class Meta:
