@@ -1,24 +1,44 @@
 <template>
   <div>
     <h1>{{ wizard.name }}</h1>
-    <template v-if="initialized">
+    <form
+      v-if="initialized"
+      @submit.prevent="form_onSubmit"
+    >
+      <input
+        type="button"
+        value="Save"
+        @click="saveAnswers"
+      >
       <Step
         v-if="step"
         :step="step"
       />
-      <router-link
+      <input
         v-if="hasPreviousStep"
-        :to="previousStep"
+        name="previous"
+        type="submit"
+        value="Previous"
+        @click="submitButton_onClick"
       >
-        Previous
-      </router-link>
-      <router-link
+      <input
         v-if="hasNextStep"
-        :to="nextStep"
+        name="next"
+        type="submit"
+        value="Next"
+        @click="submitButton_onClick"
       >
-        Next
-      </router-link>
-    </template>
+      <input
+        v-else
+        name="finish"
+        type="submit"
+        value="Finish"
+        @click="submitButton_onClick"
+      >
+    </form>
+    <div v-else>
+      Loading...
+    </div>
   </div>
 </template>
 
@@ -40,7 +60,8 @@ export default {
     },
     data() {
         return {
-            initialized: false
+            initialized: false,
+            submitSource: undefined
         }
     },
     computed: {
@@ -88,8 +109,24 @@ export default {
         this.initialize();
     },
     methods: {
-        ...mapActions(['getWizardStep']),
+        ...mapActions(['getWizardStep', 'saveAnswers']),
         ...mapMutations(['resetState']),
+        submitButton_onClick(event) {
+            this.submitSource = event.currentTarget.name;
+        },
+        form_onSubmit() {
+            const routeParams = {
+                'next': this.nextStep,
+                'previous': this.previousStep,
+                'finish': {
+                    name: 'done'
+                }
+            }[this.submitSource];
+
+            this.saveAnswers().then(() => {
+                this.$router.push(routeParams);
+            });
+        },
         initialize() {
             this.resetState();
             this.initialized = false;

@@ -2,13 +2,14 @@
   <component
     :is="component"
     :answer="answer"
-    :field="field"
+    :field="_field"
   />
 </template>
 
 <script>
 import MultipleChoiceField from '@components/MultipleChoiceField';
 import TextField from '@components/TextField';
+import { v4 as uuid } from 'uuid';
 
 export default {
     props: {
@@ -22,6 +23,12 @@ export default {
         },
     },
     computed: {
+        _field() {
+            return {
+                ...this.field,
+                uuid: uuid()
+            }
+        },
         component() {
             return {
                 'CheckboxField': MultipleChoiceField,

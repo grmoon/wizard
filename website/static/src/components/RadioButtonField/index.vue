@@ -3,7 +3,7 @@
     <RadioButtonOption
       v-for="(option, index) in options"
       :key="index"
-      :name="field.name"
+      :name="field.uuid"
       :option="option.option"
       :answer="answer"
     />

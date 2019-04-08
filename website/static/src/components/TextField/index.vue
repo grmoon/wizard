@@ -5,6 +5,7 @@
     :required="field.required"
     :maxlength="field.maxlength"
     :minlength="field.minlength"
+    :name="field.uuid"
     :pattern="field.pattern"
     :placeholder="field.placeholder"
     :readonly="field.readonly"

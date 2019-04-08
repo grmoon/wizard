@@ -1,6 +1,6 @@
 <template>
   <Wizard
-    v-if="wizard"
+    v-if="initialized"
     :step-num="stepNum"
     :wizard="wizard"
   />
@@ -9,6 +9,7 @@
 <script>
 import Wizard from '@components/Wizard';
 import axios from 'axios'
+import { mapState } from 'vuex';
 
 export default {
     components: { Wizard },
@@ -16,6 +17,10 @@ export default {
         return { wizard: undefined };
     },
     computed: {
+        ...mapState(['user']),
+        initialized() {
+            return this.wizard !== undefined && this.user !== undefined;
+        },
         stepNum() {
             return parseInt(this.$route.params.stepNum);
         }

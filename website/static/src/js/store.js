@@ -2,10 +2,11 @@ import Vuex from 'vuex';
 import Vue from 'vue';
 import axios from 'axios';
 import sortByPosition from '@utils/sortByPosition';
+import * as Cookies from 'js-cookie';
 
 
 Vue.use(Vuex);
-function defaultState() {
+function defaultState(user) {
     return {
         answers: {},
         fields: {},
@@ -18,6 +19,7 @@ function defaultState() {
         stepSections: undefined,
         triggers: {},
         wizardStep: undefined,
+        user
     }
 }
 
@@ -145,7 +147,7 @@ export default new Vuex.Store({
                 return Promise.all([answerPromise, triggerPromise, fieldsPromise]);
             });
         },
-        getAnswers({ commit, dispatch}, questionIds) {
+        getAnswers({ commit, dispatch, state }, questionIds) {
             const questionIdArray = Array.from(questionIds);
 
             if (questionIdArray.length === 0) {
@@ -167,6 +169,7 @@ export default new Vuex.Store({
                 remainingQuestionIds.forEach((questionId) => {
                     allAnswers.push({
                         question: questionId,
+                        user: state.user.id,
                         value: null,
                     })
                 });
@@ -265,6 +268,60 @@ export default new Vuex.Store({
                 commit('addOptions', options);
             });
         },
+        getUser({ commit, dispatch }) {
+            const url = 'http://localhost:8003/api/v1/me/';
+
+            return dispatch('get', { url }).then((user) => {
+                commit('setUser', user);
+            });
+        },
+        post(store, { url, config={}, payload }) {
+            const _config = {
+                ...config,
+                headers: {
+                    'X-CSRFToken': Cookies.get('csrftoken')
+                }
+            }
+
+            return axios.post(url, payload, _config).then(resp => resp.data);
+        },
+        patch(store, { url, config={}, payload }) {
+            const _config = {
+                ...config,
+                headers: {
+                    'X-CSRFToken': Cookies.get('csrftoken')
+                }
+            }
+
+            return axios.patch(url, payload, _config).then(resp => resp.data);
+        },
+        saveAnswers({ state, commit, dispatch }) {
+            const baseUrl = 'http://localhost:8003/api/v1/answers/';
+
+            const promises = Object.values(state.answers).reduce((acc, answer) => {
+                let promise;
+
+                if (answer.value !== null) {
+                    if (answer.id !== undefined) {
+                        const url = `${baseUrl}${answer.id}/`;
+                        promise = dispatch('patch', { url, payload: answer });
+                    }
+                    else {
+                        promise = dispatch('post', { url: baseUrl, payload: answer });
+                    }
+
+                    acc.push(promise);
+                }
+
+                return acc;
+            }, []);
+
+            return Promise.all(promises).then((answers) => {
+                commit('addAnswers', answers);
+
+                return answers;
+            });
+        }
     },
     mutations: {
         setWizardStep(state, wizardStep) {
@@ -346,7 +403,10 @@ export default new Vuex.Store({
             Vue.set(state.answers[questionId], 'value', value);
         },
         resetState(state) {
-            Object.assign(state, defaultState());
+            Object.assign(state, defaultState(state.user));
+        },
+        setUser(state, user) {
+            state.user = user;
         }
     }
 });
