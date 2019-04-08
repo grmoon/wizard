@@ -1,10 +1,10 @@
 from wizard.models import MultipleChoiceFieldOption
 from wizard.serializers.generic import GenericSerializer
-from wizard.serializers.through.radio_button_field_option import (
+from wizard.serializers.model.through.radio_button_field_option import (
     RadioButtonFieldOption,
     RadioButtonFieldOptionSerializer,
 )
-from wizard.serializers.through.checkbox_field_option import (
+from wizard.serializers.model.through.checkbox_field_option import (
     CheckboxFieldOption,
     CheckboxFieldOptionSerializer,
 )
