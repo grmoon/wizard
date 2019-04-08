@@ -19,8 +19,10 @@ from wizard.serializers.question import QuestionSerializer
 from wizard.serializers.section import SectionSerializer
 from wizard.serializers.step import StepSerializer
 from wizard.serializers.wizard import WizardSerializer
+from wizard.serializers.user import UserSerializer
 
 __all__ = (
+    'UserSerializer',
     'AnswerSerializer',
     'CheckboxFieldOptionSerializer',
     'CheckboxFieldSerializer',

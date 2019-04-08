@@ -15,4 +15,4 @@ class Answer(models.Model):
         unique_together = (('question', 'user'),)
 
     def __str__(self):
-        return self.value
+        return str(self.value)

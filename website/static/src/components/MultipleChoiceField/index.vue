@@ -1,10 +1,10 @@
 <template>
-    <component
-        :answer='answer'
-        :field='field'
-        :options='options'
-        :is='component'
-    />
+  <component
+    :is="component"
+    :answer="answer"
+    :field="field"
+    :options="options"
+  />
 </template>
 
 <script>
@@ -14,6 +14,16 @@ import sortByPosition from '@utils/sortByPosition';
 import { mapState } from 'vuex';
 
 export default {
+    props: {
+        field: {
+            required: true,
+            type: Object
+        },
+        answer: {
+            required: true,
+            type: Object
+        }
+    },
     computed: {
         ...mapState({
             options({ multipleChoiceFieldOptions, options }) {
@@ -41,16 +51,6 @@ export default {
                 'CheckboxField': CheckboxField,
                 'RadioButtonField': RadioButtonField,
             }[this.field.class]
-        }
-    },
-    props: {
-        field: {
-            required: true,
-            type: Object
-        },
-        answer: {
-            required: true,
-            type: Object
         }
     }
 };

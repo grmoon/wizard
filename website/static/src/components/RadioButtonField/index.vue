@@ -1,18 +1,17 @@
 <template>
-    <div>
-        <RadioButtonOption
-            v-for='(option, index) in options'
-            :key='index'
-            :name='field.name'
-            :option='option.option'
-            :answer='answer'
-        />
-    </div>
+  <div>
+    <RadioButtonOption
+      v-for="(option, index) in options"
+      :key="index"
+      :name="field.uuid"
+      :option="option.option"
+      :answer="answer"
+    />
+  </div>
 </template>
 
 <script>
 import RadioButtonOption from '@components/RadioButtonOption';
-import { mapState } from 'vuex';
 
 export default {
     components: { RadioButtonOption },

@@ -4,13 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "webpack",
+    "lint": "eslint src/**/*.vue src/**/*.js",
+    "lint:fix": "eslint src/**/*.vue src/**/*.js --fix",
     "watch": "webpack --watch"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "babel-loader": "^8.0.5",
     "css-loader": "^2.1.1",
+    "eslint": "^5.16.0",
+    "eslint-loader": "^2.1.2",
+    "eslint-plugin-vue": "^5.2.2",
+    "js-cookie": "^2.2.0",
     "style-loader": "^0.23.1",
     "vue-loader": "^15.7.0",
     "vue-template-compiler": "^2.6.10",
@@ -19,6 +29,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "uuid": "^3.3.2",
     "vue": "^2.6.10",
     "vue-router": "^3.0.2",
     "vuex": "^3.1.0"

@@ -15,6 +15,7 @@ from wizard.views.through import (
     TriggerViewSet,
     WizardStepViewSet,
 )
+from wizard.views.me import MeView
 from wizard.views.question import QuestionViewSet
 from wizard.views.section import SectionViewSet
 from wizard.views.step import StepViewSet
@@ -22,6 +23,7 @@ from wizard.views.wizard import WizardViewSet
 
 
 __all__ = (
+    'MeView',
     'CheckboxFieldViewSet',
     'CheckboxFieldOptionViewSet',
     'MultipleChoiceFieldOptionViewSet',

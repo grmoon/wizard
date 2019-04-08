@@ -1,6 +1,10 @@
+from django.urls import path
+
 from rest_framework.routers import DefaultRouter
 
+
 from wizard.views import (
+    MeView,
     AnswerViewSet,
     FieldViewSet,
     OptionViewSet,
@@ -40,4 +44,7 @@ router.register('wizard_steps', WizardStepViewSet, basename='wizard_step')
 router.register('wizards', WizardViewSet, basename='wizard')
 router.register('multiple_choice_field_options', MultipleChoiceFieldOptionViewSet, basename='multiple_choice_field_option')
 
-urlpatterns = router.urls
+urlpatterns = [
+    path('me/', MeView.as_view(), name='me')
+] + router.urls
+

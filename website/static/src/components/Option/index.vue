@@ -1,11 +1,11 @@
 <template>
-    <label>{{ label }}&nbsp;<input
-        @input='input_onChange'
-        :checked='checked'
-        :name='name'
-        :type='type'
-        :value='value'
-    /></label>
+  <label>{{ label }}&nbsp;<input
+    :checked="checked"
+    :name="name"
+    :type="type"
+    :value="value"
+    @input="input_onChange"
+  ></label>
 </template>
 
 <style>
@@ -16,11 +16,6 @@ label {
 
 <script>
 export default {
-    methods: {
-        input_onChange(event) {
-            this.$emit('change', event);
-        }
-    },
     props: {
         checked: {
             required: true,
@@ -40,6 +35,12 @@ export default {
         },
         value: {
             required: true,
+            validator: () => true
+        }
+    },
+    methods: {
+        input_onChange(event) {
+            this.$emit('change', event);
         }
     }
 };

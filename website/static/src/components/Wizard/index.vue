@@ -1,36 +1,53 @@
 <template>
-    <div>
-        <h1>{{ wizard.name }}</h1>
-        <template v-if='initialized'>
-            <Step
-                v-if='step'
-                :step='step'
-            />
-            <router-link
-                v-if='hasPreviousStep'
-                :to='previousStep'
-            >Previous</router-link>
-            <router-link
-                v-if='hasNextStep'
-                :to='nextStep'
-            >Next</router-link>
-        </template>
+  <div>
+    <h1>{{ wizard.name }}</h1>
+    <form
+      v-if="initialized"
+      @submit.prevent="form_onSubmit"
+    >
+      <input
+        type="button"
+        value="Save"
+        @click="saveAnswers"
+      >
+      <Step
+        v-if="step"
+        :step="step"
+      />
+      <input
+        v-if="hasPreviousStep"
+        name="previous"
+        type="submit"
+        value="Previous"
+        @click="submitButton_onClick"
+      >
+      <input
+        v-if="hasNextStep"
+        name="next"
+        type="submit"
+        value="Next"
+        @click="submitButton_onClick"
+      >
+      <input
+        v-else
+        name="finish"
+        type="submit"
+        value="Finish"
+        @click="submitButton_onClick"
+      >
+    </form>
+    <div v-else>
+      Loading...
     </div>
+  </div>
 </template>
 
 <script>
-import axios from 'axios';
 import Step from '@components/Step';
-import sortByPosition from '@utils/sortByPosition';
 import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default {
     components: { Step },
-    data() {
-        return {
-            initialized: false
-        }
-    },
     props: {
         stepNum: {
             required: true,
@@ -39,6 +56,12 @@ export default {
         wizard: {
             required: true,
             type: Object
+        }
+    },
+    data() {
+        return {
+            initialized: false,
+            submitSource: undefined
         }
     },
     computed: {
@@ -82,9 +105,28 @@ export default {
             this.initialize();
         }
     },
+    created() {
+        this.initialize();
+    },
     methods: {
-        ...mapActions(['getWizardStep']),
+        ...mapActions(['getWizardStep', 'saveAnswers']),
         ...mapMutations(['resetState']),
+        submitButton_onClick(event) {
+            this.submitSource = event.currentTarget.name;
+        },
+        form_onSubmit() {
+            const routeParams = {
+                'next': this.nextStep,
+                'previous': this.previousStep,
+                'finish': {
+                    name: 'done'
+                }
+            }[this.submitSource];
+
+            this.saveAnswers().then(() => {
+                this.$router.push(routeParams);
+            });
+        },
         initialize() {
             this.resetState();
             this.initialized = false;
@@ -98,9 +140,6 @@ export default {
                 this.initialized = true;
             });
         },
-    },
-    created() {
-        this.initialize();
     }
 }
 </script>
