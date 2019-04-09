@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
 from wizard.models import CheckboxField, CheckboxFieldOption
-from wizard.serializers.fields.multiple_choice_field import MultipleChoiceFieldSerializer
+from wizard.serializers.response.fields.multiple_choice_field import MultipleChoiceFieldResponseSerializer
 
-class CheckboxFieldSerializer(MultipleChoiceFieldSerializer):
+class CheckboxFieldResponseSerializer(MultipleChoiceFieldResponseSerializer):
     class Meta:
         model = CheckboxField
         option_model = CheckboxFieldOption

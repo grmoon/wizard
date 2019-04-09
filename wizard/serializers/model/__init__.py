@@ -1,27 +1,25 @@
-from wizard.serializers.model import (
-    AnswerSerializer,
-    CheckboxFieldOptionSerializer,
-    CheckboxFieldSerializer,
+from wizard.serializers.model.answer import AnswerSerializer
+from wizard.serializers.model.fields import (
     FieldSerializer,
-    MultipleChoiceFieldOptionSerializer,
-    OptionSerializer,
-    QuestionSerializer,
-    RadioButtonFieldOptionSerializer,
+    CheckboxFieldSerializer,
     RadioButtonFieldSerializer,
-    SectionQuestionSerializer,
-    SectionSerializer,
-    StepSectionSerializer,
-    StepSerializer,
     TextFieldSerializer,
+)
+from wizard.serializers.model.options import OptionSerializer
+from wizard.serializers.model.through import (
+    MultipleChoiceFieldOptionSerializer,
+    RadioButtonFieldOptionSerializer,
+    CheckboxFieldOptionSerializer,
+    SectionQuestionSerializer,
+    StepSectionSerializer,
     TriggerSerializer,
-    UserSerializer,
-    WizardSerializer,
     WizardStepSerializer,
 )
-from wizard.serializers.response import (
-    WizardStepResponseSerializer
-
-)
+from wizard.serializers.model.question import QuestionSerializer
+from wizard.serializers.model.section import SectionSerializer
+from wizard.serializers.model.step import StepSerializer
+from wizard.serializers.model.wizard import WizardSerializer
+from wizard.serializers.model.user import UserSerializer
 
 __all__ = (
     'AnswerSerializer',
@@ -35,7 +33,6 @@ __all__ = (
     'RadioButtonFieldSerializer',
     'SectionQuestionSerializer',
     'SectionSerializer',
-    'WizardStepResponseSerializer',
     'StepSectionSerializer',
     'StepSerializer',
     'TextFieldSerializer',
