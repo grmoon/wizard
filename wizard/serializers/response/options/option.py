@@ -11,11 +11,16 @@ from wizard.serializers.response.options.radio_button import (
     RadioButtonOption,
     RadioButtonOptionResponseSerializer,
 )
+from wizard.serializers.response.options.select import (
+    SelectOption,
+    SelectOptionResponseSerializer,
+)
 
 class OptionResponseSerializer(GenericSerializer):
     SERIALIZERS = {
         CheckboxOption: CheckboxOptionResponseSerializer,
         RadioButtonOption: RadioButtonOptionResponseSerializer,
+        SelectOption: SelectOptionResponseSerializer,
     }
 
     class Meta:
