@@ -39,234 +39,202 @@ export default new Vuex.Store({
             }
 
             return dispatch('get', { url, config }).then((wizardStep) => {
+                const step = wizardStep.step;
+                wizardStep.step = step.id;
+
                 commit('setWizardStep', wizardStep);
-
-                return dispatch('getStep', wizardStep.step);
+                return dispatch('getStep', step);
             });
         },
-        getStep({ commit, dispatch }, stepId) {
-            const url = `http://localhost:8003/api/v1/steps/${stepId}/`;
+        getStep({ commit, dispatch }, step) {
+            const stepSections = step.sections;
+            step.sections = stepSections.map(section => section.id);
 
-            return dispatch('get', { url }).then((step) => {
-                commit('setStep', step);
-
-                return dispatch('getStepSections', step.sections);
-            });
+            commit('setStep', step);
+            return dispatch('getStepSections', stepSections);
         },
-        getStepSections({ commit, dispatch }, stepSectionIds) {
-            const stepSectionIdArray = Array.from(stepSectionIds);
+        getStepSections({ commit, dispatch }, _stepSections) {
+            const stepSections = Array.from(_stepSections);
+            const sections = stepSections.reduce((acc, stepSection) => {
+                const section = stepSection.section;
+                stepSection.section = section.id;
 
-            if(stepSectionIdArray.length === 0) {
-                return new Promise(resolve => resolve([]))
-            }
+                acc.push(section);
+                return acc;
+            }, []);
 
-            const url = 'http://localhost:8003/api/v1/step_sections/';
-            const config = {
-                params: { ids: stepSectionIdArray }
-            };
-
-            return dispatch('get', { url, config}).then((stepSections) => {
-                commit('setStepSections', stepSections);
-
-                const sectionIds = new Set(stepSections.map(stepSection => stepSection.section));
-
-                return dispatch('getSections', sectionIds);
-            });
-
+            commit('setStepSections', stepSections);
+            return dispatch('getSections', sections);
         },
-        getSections({ commit, dispatch }, sectionIds) {
-            const sectionIdArray = Array.from(sectionIds);
+        getSections({ commit, dispatch }, _sections) {
+            const sections = Array.from(_sections);
+            const sectionQuestions = sections.reduce((acc, section) => {
+                const _sectionQuestions = section.questions;
+                section.questions = _sectionQuestions.map(sectionQuestion => sectionQuestion.id);
 
-            if(sectionIdArray.length === 0) {
-                return new Promise(resolve => resolve([]))
-            }
+                return acc.concat(_sectionQuestions);
+            }, []);
 
-            const url = 'http://localhost:8003/api/v1/sections/';
-
-            const config = {
-                params: { ids: sectionIdArray }
-            };
-
-            return dispatch('get', { url, config }).then((sections) => {
-                commit('setSections', sections);
-
-                const sectionQuestionIds = new Set(sections.reduce((acc, section) => {
-                    return acc.concat(section.questions);
-                }, []));
-
-                return dispatch('getSectionQuestions', sectionQuestionIds);
-            });
+            commit('setSections', sections);
+            return dispatch('getSectionQuestions', sectionQuestions);
         },
-        getSectionQuestions({ commit, dispatch }, sectionQuestionIds) {
-            const sectionQuestionIdArray = Array.from(sectionQuestionIds);
+        getSectionQuestions({ commit, dispatch }, _sectionQuestions) {
+            const sectionQuestions = Array.from(_sectionQuestions);
+            const questions = sectionQuestions.reduce((acc, sectionQuestion) => {
+                const question = sectionQuestion.question;
+                sectionQuestion.question = question.id;
 
-            if(sectionQuestionIdArray.length === 0) {
-                return new Promise(resolve => resolve([]))
-            }
+                acc.push(question);
+                return acc;
+            }, []);
 
-            const url = 'http://localhost:8003/api/v1/section_questions/';
-
-            const config = {
-                params: { ids: sectionQuestionIdArray }
-            };
-
-            return dispatch('get', { url, config }).then((sectionQuestions) => {
-                commit('setSectionQuestions', sectionQuestions);
-
-                const questionIds = new Set(sectionQuestions.map(sectionQuestion => sectionQuestion.question));
-
-                return dispatch('getQuestions', questionIds);
-            });
+            commit('setSectionQuestions', sectionQuestions);
+            return dispatch('getQuestions', questions);
         },
-        getQuestions({ commit, dispatch, state }, questionIds) {
+        getQuestions({ commit, dispatch, state }, _questions) {
+            const questions = Array.from(_questions);
+
             const currentQuestionIds = Object.keys(state.questions).map(id => parseInt(id));
-            const paramQuestionIds = new Set(Array.from(questionIds).filter((questionId) => {
-                return currentQuestionIds.indexOf(questionId) === -1;
-            }));
+            const newQuestions = questions.filter((question) => {
+                return currentQuestionIds.indexOf(question.id) === -1;
+            });
 
-            if (paramQuestionIds.size === 0) {
+            if (newQuestions.length === 0) {
                 return new Promise(resolve => resolve());
             }
 
-            const url = 'http://localhost:8003/api/v1/questions/';
-            const config = {
-                params: { ids: Array.from(paramQuestionIds) }
-            };
+            const fields = [];
+            const answers = [];
+            let triggers = [];
 
-            return dispatch('get', { url, config }).then((questions) => {
-                commit('addQuestions', questions);
+            newQuestions.forEach((question) => {
+                const field = question.field;
+                question.field = field.id
+                fields.push(field);
 
-                const fieldIds = new Set(questions.map(question => question.field));
-                const triggerIds = new Set(questions.reduce((acc, question) => {
-                    return acc.concat(question.triggers);
-                }, []));
-                const answerPromise = dispatch('getAnswers', paramQuestionIds);
-                const triggerPromise = dispatch('getTriggers', triggerIds);
-                const fieldsPromise = dispatch('getFields', fieldIds);
+                const _triggers = question.triggers;
+                question.triggers = _triggers.map(trigger => trigger.id);
+                triggers = triggers.concat(_triggers);
 
-                return Promise.all([answerPromise, triggerPromise, fieldsPromise]);
+                const answer = question.answer;
+
+                if (answer !== null) {
+                    question.answer = answer.id;
+                    answers.push(answer);
+                }
             });
+
+            commit('addQuestions', newQuestions);
+
+            const answerPromise = dispatch('getAnswers', newQuestions);
+            const triggerPromise = dispatch('getTriggers', triggers);
+            const fieldsPromise = dispatch('getFields', fields);
+
+            return Promise.all([answerPromise, triggerPromise, fieldsPromise]);
         },
-        getAnswers({ commit, dispatch, state }, questionIds) {
-            const questionIdArray = Array.from(questionIds);
+        getAnswers({ commit, state }, _questions) {
+            const questions = Array.from(_questions);
+            const questionsWithoutAnswers = [];
+            const answers = []
 
-            if (questionIdArray.length === 0) {
-                return new Promise(resolve => resolve([]));
-            }
+            questions.forEach((question) => {
+                if (question.answer === null) {
+                    questionsWithoutAnswers.push(question);
+                }
+                else {
+                    answers.push(question.answer);
+                }
+            });
 
-            const url = 'http://localhost:8003/api/v1/answers/';
-            const config = {
-                params: { question_ids: questionIdArray }
-            };
-
-            return dispatch('get', { url, config }).then((answers) => {
-                const allAnswers = Array.from(answers);
-                const answerQuestionIds = answers.map(answer => answer.question);
-                const remainingQuestionIds = questionIdArray.filter((questionId) => {
-                    return answerQuestionIds.indexOf(questionId) === -1;
+            const allAnswers = questionsWithoutAnswers.reduce((acc, question) => {
+                acc.push({
+                    question: question.id,
+                    user: state.user.id,
+                    value: null,
                 });
 
-                remainingQuestionIds.forEach((questionId) => {
-                    allAnswers.push({
-                        question: questionId,
-                        user: state.user.id,
-                        value: null,
-                    })
-                });
+                return acc;
+            }, answers);
 
-                commit('addAnswers', allAnswers);
-            });
+            commit('addAnswers', allAnswers);
+
+            return new Promise(resolve => resolve(allAnswers));
         },
-        getTriggers({ commit, dispatch }, triggerIds) {
-            const triggerIdArray = Array.from(triggerIds);
+        getTriggers({ commit, dispatch }, _triggers) {
+            const triggers = Array.from(_triggers)
+            const toQuestions = triggers.reduce((acc, trigger) => {
+                const question = trigger.to_question;
+                trigger.to_question = question.id;
 
-            if (triggerIdArray.length === 0) {
-                return new Promise(resolve => resolve([]));
-            }
+                acc.push(question);
+                return acc;
+            }, []);
 
-            const url = 'http://localhost:8003/api/v1/triggers/';
-            const config = {
-                params: { ids: triggerIdArray }
-            };
+            commit('addTriggers', triggers);
 
-            return dispatch('get', { url, config }).then((triggers) => {
-                commit('addTriggers', triggers);
-
-                const toQuestionIds = new Set(triggers.map(trigger => trigger.to_question));
-
-                return dispatch('getQuestions', toQuestionIds);
-            });
+            return dispatch('getQuestions', toQuestions);
         },
-        getFields({ commit, dispatch, state }, fieldIds) {
+        getFields({ commit, dispatch, state }, _fields) {
+            const fields = Array.from(_fields);
             const currentFieldIds = Object.keys(state.fields).map(id => parseInt(id));
-            const paramFieldIds = new Set(Array.from(fieldIds).filter((fieldId) => {
-                return currentFieldIds.indexOf(fieldId) === -1;
-            }));
+            const newFields = fields.filter((field) => {
+                return currentFieldIds.indexOf(field.id) === -1;
+            });
 
-            if (paramFieldIds.size === 0) {
-                return new Promise(resolve => resolve());
+            if (newFields.length === 0) {
+                return new Promise(resolve => resolve([]));
             }
 
-            const url = 'http://localhost:8003/api/v1/fields/';
-            const config = {
-                params: { ids: Array.from(paramFieldIds) }
-            };
+            const multipleChoiceFieldOptions = newFields.reduce((acc, field) => {
+                const options = field.options || [];
+                field.options = options.map(option => option.id);
 
-            return dispatch('get', { url, config }).then((fields) => {
-                commit('addFields', fields);
+                return acc.concat(options);
+            }, []);
 
-                const multipleChoiceFieldOptionIds = fields.reduce((acc, field) => {
-                    return acc.concat(field.options || []);
-                }, []);
 
-                return dispatch('getMultipleChoiceFieldOptions', multipleChoiceFieldOptionIds)
-            });
+            commit('addFields', newFields);
+
+            return dispatch('getMultipleChoiceFieldOptions', multipleChoiceFieldOptions);
+
         },
-        getMultipleChoiceFieldOptions({ commit, dispatch, state }, multipleChoiceFieldMultipleChoiceFieldOptionIds) {
-            const currentMultipleChoiceFieldOptionIds = Object.keys(state.options).map(id => parseInt(id));
-            const paramMultipleChoiceFieldOptionIds = new Set(Array.from(multipleChoiceFieldMultipleChoiceFieldOptionIds).filter((multipleChoiceFieldMultipleChoiceFieldOptionId) => {
-                return currentMultipleChoiceFieldOptionIds.indexOf(multipleChoiceFieldMultipleChoiceFieldOptionId) === -1;
-            }));
+        getMultipleChoiceFieldOptions({ commit, dispatch, state }, _multipleChoiceFieldOptions) {
+            const multipleChoiceFieldOptions = Array.from(_multipleChoiceFieldOptions);
+            const currentMultipleChoiceFieldOptionIds = Object.keys(state.multipleChoiceFieldOptions).map(id => parseInt(id));
+            const newMultipleChoiceFieldOptions = multipleChoiceFieldOptions.filter((multipleChoiceFieldOption) => {
+                return currentMultipleChoiceFieldOptionIds.indexOf(multipleChoiceFieldOption.id) === -1;
+            });
 
-            if (paramMultipleChoiceFieldOptionIds.size === 0) {
-                return new Promise(resolve => resolve());
+            if (newMultipleChoiceFieldOptions.length === 0) {
+                return new Promise(resolve => resolve([]));
             }
 
-            const url = 'http://localhost:8003/api/v1/multiple_choice_field_options/';
-            const config = {
-                params: { ids: Array.from(paramMultipleChoiceFieldOptionIds) }
-            };
+            commit('addMultipleChoiceOptions', multipleChoiceFieldOptions);
 
-            return dispatch('get', { url, config }).then((multipleChoiceFieldOptions) => {
-                commit('addMultipleChoiceOptions', multipleChoiceFieldOptions);
+            const options = multipleChoiceFieldOptions.map((multipleChoiceFieldOption) => {
+                const option = multipleChoiceFieldOption.option;
+                multipleChoiceFieldOption.option = option.id
 
-                const optionIds = multipleChoiceFieldOptions.reduce((acc, multipleChoiceFieldOption) => {
-                    acc.add(multipleChoiceFieldOption.option);
-
-                    return acc;
-                }, new Set());
-
-                return dispatch('getOptions', optionIds);
+                return option;
             });
+
+            return dispatch('getOptions', options);
         },
-        getOptions({ commit, dispatch, state }, optionIds) {
+        getOptions({ commit, state }, _options) {
+            const options = Array.from(_options);
+
             const currentOptionIds = Object.keys(state.options).map(id => parseInt(id));
-            const paramOptionIds = new Set(Array.from(optionIds).filter((optionId) => {
-                return currentOptionIds.indexOf(optionId) === -1;
-            }));
+            const newOptions = options.filter((option) => {
+                return currentOptionIds.indexOf(option.id) === -1;
+            });
 
-            if (paramOptionIds.size === 0) {
-                return new Promise(resolve => resolve());
+            if (newOptions.length === 0) {
+                return new Promise(resolve => resolve([]));
             }
 
-            const url = 'http://localhost:8003/api/v1/options/';
-            const config = {
-                params: { ids: Array.from(paramOptionIds) }
-            };
+            commit('addOptions', newOptions);
 
-            return dispatch('get', { url, config }).then((options) => {
-                commit('addOptions', options);
-            });
+            return new Promise(resolve => resolve(newOptions));
         },
         getUser({ commit, dispatch }) {
             const url = 'http://localhost:8003/api/v1/me/';
@@ -382,7 +350,10 @@ export default new Vuex.Store({
 
             Object.values(triggersByQuestion).forEach(sortByPosition);
 
-            state.triggers = triggersByQuestion;
+            state.triggers = {
+                ...state.triggers,
+                ...triggersByQuestion
+            }
         },
         addFields(state, fields) {
             fields.forEach((field) => {

@@ -1,5 +1,5 @@
-from wizard.serializers.response.step import StepResponseSerializer
+from wizard.serializers.response.wizard_step import WizardStepResponseSerializer
 
 __all__ = (
-    'StepResponseSerializer',
+    'WizardStepResponseSerializer',
 )

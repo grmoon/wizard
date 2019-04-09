@@ -128,7 +128,9 @@ export default {
             });
         },
         initialize() {
-            this.resetState();
+            if (this.step !== undefined) {
+                this.resetState();
+            }
             this.initialized = false;
 
             const params = {

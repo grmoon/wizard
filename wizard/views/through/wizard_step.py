@@ -3,12 +3,12 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from wizard.models import WizardStep
-from wizard.serializers import WizardStepSerializer
+from wizard.serializers import WizardStepResponseSerializer
 
 
 class WizardStepViewSet(viewsets.ModelViewSet):
     queryset = WizardStep.objects.all()
-    serializer_class = WizardStepSerializer
+    serializer_class = WizardStepResponseSerializer
 
     def _get_step_for_wizard(self, wizard_id, step_num):
         try:
@@ -18,7 +18,8 @@ class WizardStepViewSet(viewsets.ModelViewSet):
         except (AssertionError, IndexError):
             raise NotFound()
         else:
-            return Response(WizardStepSerializer(step).data)
+            context = { 'request': self.request }
+            return Response(WizardStepResponseSerializer(step, context=context).data)
 
     def list(self, *args, **kwargs):
         wizard_id = self.request.query_params.get('wizard_id')
