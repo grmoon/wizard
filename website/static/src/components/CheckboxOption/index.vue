@@ -36,10 +36,10 @@ export default {
     },
     computed: {
         exclusive() {
-            return this.exclusiveValues.includes(this.option.value);
+            return this.exclusiveValues.includes(this.option.option.value);
         },
         checked() {
-            return this.answerValue.includes(this.option.value);
+            return this.answerValue.includes(this.option.option.value);
         },
         answerValue() {
             return this.answer.value || [];

@@ -252,27 +252,24 @@ export default new Vuex.Store({
             return axios.patch(url, payload, _config).then(resp => resp.data);
         },
         saveAnswers({ state, commit, dispatch }) {
-            const baseUrl = 'http://localhost:8003/api/v1/answers/';
+            const temp = 'http://localhost:8003/api/v1/answers/bulk/';
+            const answersToSave= Object.values(state.answers)
+                .filter(answer => answer.value !== null)
+                .map((answer) => {
+                    const _answer = {
+                        question_id: answer.question,
+                        user_id: answer.user,
+                        value: answer.value,
+                    };
 
-            const promises = Object.values(state.answers).reduce((acc, answer) => {
-                let promise;
-
-                if (answer.value !== null) {
-                    if (answer.id !== undefined) {
-                        const url = `${baseUrl}${answer.id}/`;
-                        promise = dispatch('patch', { url, payload: answer });
+                    if (answer.id !== null) {
+                        _answer['id'] = answer.id;
                     }
-                    else {
-                        promise = dispatch('post', { url: baseUrl, payload: answer });
-                    }
 
-                    acc.push(promise);
-                }
+                    return _answer;
+                });
 
-                return acc;
-            }, []);
-
-            return Promise.all(promises).then((answers) => {
+            return dispatch('post', { url: temp, payload: answersToSave }).then((answers) => {
                 commit('addAnswers', answers);
 
                 return answers;

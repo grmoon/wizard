@@ -1,4 +1,7 @@
-from wizard.views.answer import AnswerViewSet
+from wizard.views.answer import (
+    AnswerViewSet,
+    AnswerBulkAPIView,
+)
 from wizard.views.fields import (
     CheckboxFieldViewSet,
     FieldViewSet,

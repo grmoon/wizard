@@ -4,9 +4,13 @@ from rest_framework.routers import DefaultRouter
 
 
 from wizard.views import (
-    MeView,
+    AnswerBulkAPIView,
     AnswerViewSet,
+    CheckboxFieldViewSet,
+    CheckboxOptionViewSet,
     FieldViewSet,
+    MeView,
+    MultipleChoiceOptionViewSet,
     OptionViewSet,
     QuestionViewSet,
     RadioButtonFieldViewSet,
@@ -19,9 +23,6 @@ from wizard.views import (
     TriggerViewSet,
     WizardStepViewSet,
     WizardViewSet,
-    MultipleChoiceOptionViewSet,
-    CheckboxOptionViewSet,
-    CheckboxFieldViewSet
 )
 
 router = DefaultRouter()
@@ -45,6 +46,7 @@ router.register('wizards', WizardViewSet, basename='wizard')
 router.register('multiple_choice_options', MultipleChoiceOptionViewSet, basename='multiple_choice_option')
 
 urlpatterns = [
-    path('me/', MeView.as_view(), name='me')
+    path('me/', MeView.as_view(), name='me'),
+    path('answers/bulk/', AnswerBulkAPIView.as_view(), name='answer.bulk'),
 ] + router.urls
 
