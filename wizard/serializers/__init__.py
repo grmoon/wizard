@@ -19,7 +19,8 @@ from wizard.serializers.model import (
     WizardStepSerializer,
 )
 from wizard.serializers.response import (
-    StepResponseSerializer
+    WizardStepResponseSerializer
+
 )
 
 __all__ = (
@@ -34,7 +35,7 @@ __all__ = (
     'RadioButtonFieldSerializer',
     'SectionQuestionSerializer',
     'SectionSerializer',
-    'StepResponseSerializer',
+    'WizardStepResponseSerializer',
     'StepSectionSerializer',
     'StepSerializer',
     'TextFieldSerializer',
