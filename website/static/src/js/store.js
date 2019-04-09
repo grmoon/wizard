@@ -116,49 +116,37 @@ export default new Vuex.Store({
                 question.triggers = _triggers.map(trigger => trigger.id);
                 triggers = triggers.concat(_triggers);
 
-                const answer = question.answer;
+                let answer;
 
-                if (answer !== null) {
-                    question.answer = answer.id;
-                    answers.push(answer);
+                if (question.answer === null) {
+                    answer = {
+                        question: question.id,
+                        user: state.user.id,
+                        value: null,
+                    };
                 }
+                else if (answer !== null) {
+                    answer = question.answer
+                    question.answer = answer.id;
+                }
+
+                answers.push(answer);
             });
 
             commit('addQuestions', newQuestions);
 
-            const answerPromise = dispatch('getAnswers', newQuestions);
+            const answerPromise = dispatch('getAnswers', answers);
             const triggerPromise = dispatch('getTriggers', triggers);
             const fieldsPromise = dispatch('getFields', fields);
 
             return Promise.all([answerPromise, triggerPromise, fieldsPromise]);
         },
-        getAnswers({ commit, state }, _questions) {
-            const questions = Array.from(_questions);
-            const questionsWithoutAnswers = [];
-            const answers = []
+        getAnswers({ commit }, _answers) {
+            const answers = Array.from(_answers);
 
-            questions.forEach((question) => {
-                if (question.answer === null) {
-                    questionsWithoutAnswers.push(question);
-                }
-                else {
-                    answers.push(question.answer);
-                }
-            });
+            commit('addAnswers', answers);
 
-            const allAnswers = questionsWithoutAnswers.reduce((acc, question) => {
-                acc.push({
-                    question: question.id,
-                    user: state.user.id,
-                    value: null,
-                });
-
-                return acc;
-            }, answers);
-
-            commit('addAnswers', allAnswers);
-
-            return new Promise(resolve => resolve(allAnswers));
+            return new Promise(resolve => resolve(answers));
         },
         getTriggers({ commit, dispatch }, _triggers) {
             const triggers = Array.from(_triggers)
