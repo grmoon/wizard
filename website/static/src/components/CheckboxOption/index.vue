@@ -2,9 +2,10 @@
   <Option
     type="checkbox"
     :checked="checked"
-    :label="option.label"
+    :label="option.option.label"
     :name="name"
-    :value="option.value"
+    :required="option.required"
+    :value="option.option.value"
     @change="option_onChange"
   />
 </template>

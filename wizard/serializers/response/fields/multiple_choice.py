@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from wizard.models import MultipleChoiceField, MultipleChoiceFieldOption
+from wizard.models import MultipleChoiceField, MultipleChoiceOption
 from wizard.serializers.response.options.option import OptionResponseSerializer
 
 class MultipleChoiceFieldResponseSerializer(serializers.ModelSerializer):

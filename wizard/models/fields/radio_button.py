@@ -7,5 +7,5 @@ class RadioButtonField(MultipleChoiceField):
     required = models.BooleanField(default=False)
     options = models.ManyToManyField(
         'wizard.Option',
-        through='wizard.RadioButtonFieldOption',
+        through='wizard.RadioButtonOption',
     )

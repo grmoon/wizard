@@ -1,9 +1,9 @@
 from django.db import models
 
-from wizard.models.through.multiple_choice_field_option import MultipleChoiceFieldOption
+from wizard.models.options.multiple_choice import MultipleChoiceOption
 
 
-class AbstractMultipleChoiceFieldOption(MultipleChoiceFieldOption):
+class AbstractMultipleChoiceOption(MultipleChoiceOption):
     option = models.ForeignKey('wizard.Option', on_delete=models.CASCADE)
     position = models.PositiveIntegerField()
 
