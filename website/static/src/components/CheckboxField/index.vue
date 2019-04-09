@@ -4,8 +4,9 @@
       v-for="(option, index) in options"
       :key="index"
       :name="field.uuid"
-      :option="option"
+      :option="option.option"
       :answer="answer"
+      :required="option.required"
       :exclusive-values="exclusiveValues"
     />
   </div>

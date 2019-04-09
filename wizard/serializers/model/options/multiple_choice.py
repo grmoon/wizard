@@ -8,11 +8,16 @@ from wizard.serializers.model.options.checkbox import (
     CheckboxOption,
     CheckboxOptionSerializer,
 )
+from wizard.serializers.model.options.select import (
+    SelectOption,
+    SelectOptionSerializer,
+)
 
 class MultipleChoiceOptionSerializer(GenericSerializer):
     SERIALIZERS = {
         CheckboxOption: CheckboxOptionSerializer,
         RadioButtonOption: RadioButtonOptionSerializer,
+        SelectOption: SelectOptionSerializer,
     }
 
     class Meta:

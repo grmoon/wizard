@@ -1,20 +1,22 @@
 from wizard.models.answer import Answer
 from wizard.models.fields import (
+    CheckboxField,
     Field,
     InputField,
     MultipleChoiceField,
-    Option,
     RadioButtonField,
+    SelectField,
     TextField,
-    CheckboxField,
 )
 from wizard.models.generic import GenericModel
 from wizard.models.question import Question
 from wizard.models.options import (
     AbstractMultipleChoiceOption,
-    MultipleChoiceOption,
     CheckboxOption,
+    MultipleChoiceOption,
+    Option,
     RadioButtonOption,
+    SelectOption,
 )
 from wizard.models.through import (
     SectionQuestion,
@@ -41,6 +43,8 @@ __all__ = (
     'RadioButtonOption',
     'Section',
     'SectionQuestion',
+    'SelectField',
+    'SelectOption',
     'Step',
     'StepSection',
     'TextField',

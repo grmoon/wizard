@@ -2,10 +2,10 @@
   <Option
     type="checkbox"
     :checked="checked"
-    :label="option.option.label"
+    :label="option.label"
     :name="name"
-    :required="option.required"
-    :value="option.option.value"
+    :required="required"
+    :value="option.value"
     @change="option_onChange"
   />
 </template>
@@ -20,6 +20,10 @@ export default {
         option: {
             required: true,
             type: Object
+        },
+        required: {
+            required: true,
+            type: Boolean
         },
         name: {
             required: true,
@@ -36,10 +40,10 @@ export default {
     },
     computed: {
         exclusive() {
-            return this.exclusiveValues.includes(this.option.option.value);
+            return this.exclusiveValues.includes(this.option.value);
         },
         checked() {
-            return this.answerValue.includes(this.option.option.value);
+            return this.answerValue.includes(this.option.value);
         },
         answerValue() {
             return this.answer.value || [];
