@@ -6,6 +6,7 @@
       :name="field.uuid"
       :option="option.option"
       :answer="answer"
+      :required="field.required"
     />
   </div>
 </template>

@@ -5,11 +5,13 @@ from wizard.serializers.model.fields import (
     RadioButtonFieldSerializer,
     TextFieldSerializer,
 )
-from wizard.serializers.model.options import OptionSerializer
+from wizard.serializers.model.options import (
+    CheckboxOptionSerializer,
+    MultipleChoiceOptionSerializer,
+    OptionSerializer,
+    RadioButtonOptionSerializer,
+)
 from wizard.serializers.model.through import (
-    MultipleChoiceFieldOptionSerializer,
-    RadioButtonFieldOptionSerializer,
-    CheckboxFieldOptionSerializer,
     SectionQuestionSerializer,
     StepSectionSerializer,
     TriggerSerializer,
@@ -23,13 +25,13 @@ from wizard.serializers.model.user import UserSerializer
 
 __all__ = (
     'AnswerSerializer',
-    'CheckboxFieldOptionSerializer',
+    'CheckboxOptionSerializer',
     'CheckboxFieldSerializer',
     'FieldSerializer',
-    'MultipleChoiceFieldOptionSerializer',
+    'MultipleChoiceOptionSerializer',
     'OptionSerializer',
     'QuestionSerializer',
-    'RadioButtonFieldOptionSerializer',
+    'RadioButtonOptionSerializer',
     'RadioButtonFieldSerializer',
     'SectionQuestionSerializer',
     'SectionSerializer',

@@ -4,6 +4,7 @@
     :name="name"
     :type="type"
     :value="value"
+    :required="required"
     @input="input_onChange"
   ></label>
 </template>
@@ -28,6 +29,10 @@ export default {
         name: {
             required: true,
             type: String
+        },
+        required: {
+            required: true,
+            type: Boolean
         },
         type: {
             required: true,

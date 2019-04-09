@@ -6,10 +6,12 @@ from wizard.views.fields import (
     RadioButtonFieldViewSet,
     TextFieldViewSet,
 )
+from wizard.views.options import (
+    CheckboxOptionViewSet,
+    MultipleChoiceOptionViewSet,
+    RadioButtonOptionViewSet,
+)
 from wizard.views.through import (
-    CheckboxFieldOptionViewSet,
-    MultipleChoiceFieldOptionViewSet,
-    RadioButtonFieldOptionViewSet,
     StepSectionViewSet,
     SectionQuestionViewSet,
     TriggerViewSet,
@@ -25,13 +27,13 @@ from wizard.views.wizard import WizardViewSet
 __all__ = (
     'MeView',
     'CheckboxFieldViewSet',
-    'CheckboxFieldOptionViewSet',
-    'MultipleChoiceFieldOptionViewSet',
+    'CheckboxOptionViewSet',
+    'MultipleChoiceOptionViewSet',
     'FieldViewSet',
     'AnswerViewSet',
     'OptionViewSet',
     'QuestionViewSet',
-    'RadioButtonFieldOptionViewSet',
+    'RadioButtonOptionViewSet',
     'RadioButtonFieldViewSet',
     'SectionQuestionViewSet',
     'SectionViewSet',

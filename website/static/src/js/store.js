@@ -122,7 +122,7 @@ export default new Vuex.Store({
                     answer = {
                         question: question.id,
                         user: state.user.id,
-                        value: null,
+                        value: field.default
                     };
                 }
                 else if (answer !== null) {

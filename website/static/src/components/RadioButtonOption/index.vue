@@ -5,6 +5,7 @@
     :label="option.label"
     :name="name"
     :value="option.value"
+    :required="required"
     @change="option_onChange"
   />
 </template>
@@ -19,6 +20,10 @@ export default {
         option: {
             required: true,
             type: Object
+        },
+        required: {
+            required: true,
+            type: Boolean
         },
         name: {
             required: true,

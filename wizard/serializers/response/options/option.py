@@ -4,18 +4,18 @@ from wizard.models import Option
 from wizard.serializers.generic import GenericSerializer
 from wizard.serializers.model.options.option import OptionSerializer
 from wizard.serializers.response.options.checkbox import (
-    CheckboxFieldOption,
-    CheckboxFieldOptionResponseSerializer,
+    CheckboxOption,
+    CheckboxOptionResponseSerializer,
 )
 from wizard.serializers.response.options.radio_button import (
-    RadioButtonFieldOption,
-    RadioButtonFieldOptionResponseSerializer,
+    RadioButtonOption,
+    RadioButtonOptionResponseSerializer,
 )
 
 class OptionResponseSerializer(GenericSerializer):
     SERIALIZERS = {
-        CheckboxFieldOption: CheckboxFieldOptionResponseSerializer,
-        RadioButtonFieldOption: RadioButtonFieldOptionResponseSerializer,
+        CheckboxOption: CheckboxOptionResponseSerializer,
+        RadioButtonOption: RadioButtonOptionResponseSerializer,
     }
 
     class Meta:

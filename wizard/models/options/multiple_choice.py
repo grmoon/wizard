@@ -1,5 +1,5 @@
 from wizard.models.generic import GenericModel
 
 
-class MultipleChoiceFieldOption(GenericModel):
+class MultipleChoiceOption(GenericModel):
     pass
