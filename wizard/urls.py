@@ -10,7 +10,6 @@ from wizard.views import (
     CheckboxOptionViewSet,
     FieldViewSet,
     MeView,
-    MultipleChoiceOptionViewSet,
     OptionViewSet,
     QuestionViewSet,
     RadioButtonFieldViewSet,
@@ -43,7 +42,6 @@ router.register('text_fields', TextFieldViewSet, basename='text_field')
 router.register('triggers', TriggerViewSet, basename='trigger')
 router.register('wizard_steps', WizardStepViewSet, basename='wizard_step')
 router.register('wizards', WizardViewSet, basename='wizard')
-router.register('multiple_choice_options', MultipleChoiceOptionViewSet, basename='multiple_choice_option')
 
 urlpatterns = [
     path('me/', MeView.as_view(), name='me'),
