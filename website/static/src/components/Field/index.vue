@@ -32,6 +32,7 @@ export default {
         component() {
             return {
                 'CheckboxField': MultipleChoiceField,
+                'SelectField': MultipleChoiceField,
                 'RadioButtonField': MultipleChoiceField,
                 'TextField': TextField,
             }[this.field.class]

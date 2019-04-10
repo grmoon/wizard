@@ -10,6 +10,7 @@ from wizard.serializers.model.options import (
     MultipleChoiceOptionSerializer,
     OptionSerializer,
     RadioButtonOptionSerializer,
+    SelectOptionSerializer,
 )
 from wizard.serializers.model.through import (
     SectionQuestionSerializer,
@@ -35,6 +36,7 @@ __all__ = (
     'RadioButtonFieldSerializer',
     'SectionQuestionSerializer',
     'SectionSerializer',
+    'SelectOptionSerializer',
     'StepSectionSerializer',
     'StepSerializer',
     'TextFieldSerializer',

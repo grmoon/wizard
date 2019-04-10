@@ -9,6 +9,7 @@
 
 <script>
 import CheckboxField from '@components/CheckboxField';
+import SelectField from '@components/SelectField';
 import RadioButtonField from '@components/RadioButtonField';
 import sortByPosition from '@utils/sortByPosition';
 import { mapState } from 'vuex';
@@ -50,6 +51,7 @@ export default {
             return {
                 'CheckboxField': CheckboxField,
                 'RadioButtonField': RadioButtonField,
+                'SelectField': SelectField,
             }[this.field.class]
         }
     }
