@@ -11,7 +11,6 @@ from wizard.models.fields import (
 from wizard.models.generic import GenericModel
 from wizard.models.question import Question
 from wizard.models.options import (
-    AbstractMultipleChoiceOption,
     CheckboxOption,
     MultipleChoiceOption,
     Option,
@@ -31,7 +30,7 @@ from wizard.models.wizard import Wizard
 __all__ = (
     'CheckboxField',
     'CheckboxOption',
-    'AbstractMultipleChoiceOption',
+    'MultipleChoiceOption',
     'Answer',
     'Field',
     'GenericModel',

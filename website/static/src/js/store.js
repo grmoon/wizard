@@ -10,7 +10,7 @@ function defaultState(user) {
     return {
         answers: {},
         fields: {},
-        multipleChoiceFieldOptions: {},
+        multipleChoiceOptions: {},
         options: {},
         questions: {},
         sectionQuestions: undefined,
@@ -38,206 +38,32 @@ export default new Vuex.Store({
                 }
             }
 
-            return dispatch('get', { url, config }).then((wizardStep) => {
-                const step = wizardStep.step;
-                wizardStep.step = step.id;
-
+            return dispatch('get', { url, config }).then(({
+                wizard_step: wizardStep,
+                step,
+                step_sections: stepSections,
+                sections,
+                section_questions: sectionQuestions,
+                questions,
+                fields,
+                answers,
+                triggers,
+                multiple_choice_options: multipleChoiceOptions,
+                options,
+            }) => {
                 commit('setWizardStep', wizardStep);
-                return dispatch('getStep', step);
+                commit('setStep', step);
+                commit('setStepSections', stepSections);
+                commit('setSections', sections);
+                commit('setSectionQuestions', sectionQuestions);
+                commit('setFields', fields);
+                commit('setTriggers', triggers);
+                commit('setMultipleChoiceOptions', multipleChoiceOptions);
+                commit('setOptions', options);
+
+                commit('setQuestions', questions);
+                commit('setAnswers', answers);
             });
-        },
-        getStep({ commit, dispatch }, step) {
-            const stepSections = step.sections;
-            step.sections = stepSections.map(section => section.id);
-
-            commit('setStep', step);
-            return dispatch('getStepSections', stepSections);
-        },
-        getStepSections({ commit, dispatch }, _stepSections) {
-            const stepSections = Array.from(_stepSections);
-            const sections = stepSections.reduce((acc, stepSection) => {
-                const section = stepSection.section;
-                stepSection.section = section.id;
-
-                acc.push(section);
-                return acc;
-            }, []);
-
-            commit('setStepSections', stepSections);
-            return dispatch('getSections', sections);
-        },
-        getSections({ commit, dispatch }, _sections) {
-            const sections = Array.from(_sections);
-            const sectionQuestions = sections.reduce((acc, section) => {
-                const _sectionQuestions = section.questions;
-                section.questions = _sectionQuestions.map(sectionQuestion => sectionQuestion.id);
-
-                return acc.concat(_sectionQuestions);
-            }, []);
-
-            commit('setSections', sections);
-            return dispatch('getSectionQuestions', sectionQuestions);
-        },
-        getSectionQuestions({ commit, dispatch }, _sectionQuestions) {
-            const sectionQuestions = Array.from(_sectionQuestions);
-            const questions = sectionQuestions.reduce((acc, sectionQuestion) => {
-                const question = sectionQuestion.question;
-                sectionQuestion.question = question.id;
-
-                acc.push(question);
-                return acc;
-            }, []);
-
-            commit('setSectionQuestions', sectionQuestions);
-            return dispatch('getQuestions', questions);
-        },
-        getQuestions({ commit, dispatch, state }, _questions) {
-            const questions = Array.from(_questions);
-
-            const currentQuestionIds = Object.keys(state.questions).map(id => parseInt(id));
-            const newQuestions = questions.filter((question) => {
-                return currentQuestionIds.indexOf(question.id) === -1;
-            });
-
-            if (newQuestions.length === 0) {
-                return new Promise(resolve => resolve());
-            }
-
-            const fields = [];
-            const answers = [];
-            let triggers = [];
-
-            newQuestions.forEach((question) => {
-                const field = question.field;
-                question.field = field.id
-                fields.push(field);
-
-                const _triggers = question.triggers;
-                question.triggers = _triggers.map(trigger => trigger.id);
-                triggers = triggers.concat(_triggers);
-
-                let answer;
-
-                if (question.answer === null) {
-                    answer = {
-                        question: question.id,
-                        user: state.user.id,
-                        value: field.default
-                    };
-                }
-                else if (answer !== null) {
-                    answer = question.answer
-                    question.answer = answer.id;
-                }
-
-                answers.push(answer);
-            });
-
-            commit('addQuestions', newQuestions);
-
-            const answerPromise = dispatch('getAnswers', answers);
-            const triggerPromise = dispatch('getTriggers', triggers);
-            const fieldsPromise = dispatch('getFields', fields);
-
-            return Promise.all([answerPromise, triggerPromise, fieldsPromise]);
-        },
-        getAnswers({ commit }, _answers) {
-            const answers = Array.from(_answers);
-
-            commit('addAnswers', answers);
-
-            return new Promise(resolve => resolve(answers));
-        },
-        getTriggers({ commit, dispatch }, _triggers) {
-            const triggers = Array.from(_triggers)
-            const toQuestions = triggers.reduce((acc, trigger) => {
-                const question = trigger.to_question;
-                trigger.to_question = question.id;
-
-                acc.push(question);
-                return acc;
-            }, []);
-
-            commit('addTriggers', triggers);
-
-            return dispatch('getQuestions', toQuestions);
-        },
-        getFields({ commit, dispatch, state }, _fields) {
-            const fields = Array.from(_fields);
-            const currentFieldIds = Object.keys(state.fields).map(id => parseInt(id));
-            const newFields = fields.filter((field) => {
-                return currentFieldIds.indexOf(field.id) === -1;
-            });
-
-            if (newFields.length === 0) {
-                return new Promise(resolve => resolve([]));
-            }
-
-            const multipleChoiceFieldOptions = newFields.reduce((acc, field) => {
-                const options = field.options || [];
-                field.options = options.map(option => option.id);
-
-                return acc.concat(options);
-            }, []);
-
-
-            commit('addFields', newFields);
-
-            return dispatch('getMultipleChoiceFieldOptions', multipleChoiceFieldOptions);
-
-        },
-        getMultipleChoiceFieldOptions({ commit, dispatch, state }, _multipleChoiceFieldOptions) {
-            const multipleChoiceFieldOptions = Array.from(_multipleChoiceFieldOptions);
-            const newMultipleChoiceFieldOptions = multipleChoiceFieldOptions.filter((multipleChoiceFieldOption) => {
-                let include;
-                const fieldId = multipleChoiceFieldOption.field;
-
-                if (!(fieldId in state.multipleChoiceFieldOptions)) {
-                    include = true;
-                }
-                else {
-                    const options = state.multipleChoiceFieldOptions[fieldId];
-
-                    if (multipleChoiceFieldOption.id in options) {
-                        include = false;
-                    }
-                    else {
-                        include = true;
-                    }
-                }
-
-                return include;
-            });
-
-            if (newMultipleChoiceFieldOptions.length === 0) {
-                return new Promise(resolve => resolve([]));
-            }
-
-            const options = multipleChoiceFieldOptions.map((multipleChoiceFieldOption) => {
-                const option = multipleChoiceFieldOption.option;
-                multipleChoiceFieldOption.option = option.id
-
-                return option;
-            });
-
-            commit('addMultipleChoiceOptions', multipleChoiceFieldOptions);
-            return dispatch('getOptions', options);
-        },
-        getOptions({ commit, state }, _options) {
-            const options = Array.from(_options);
-
-            const currentOptionIds = Object.keys(state.options).map(id => parseInt(id));
-            const newOptions = options.filter((option) => {
-                return currentOptionIds.indexOf(option.id) === -1;
-            });
-
-            if (newOptions.length === 0) {
-                return new Promise(resolve => resolve([]));
-            }
-
-            commit('addOptions', newOptions);
-
-            return new Promise(resolve => resolve(newOptions));
         },
         getUser({ commit, dispatch }) {
             const url = 'http://localhost:8003/api/v1/me/';
@@ -255,16 +81,6 @@ export default new Vuex.Store({
             }
 
             return axios.post(url, payload, _config).then(resp => resp.data);
-        },
-        patch(store, { url, config={}, payload }) {
-            const _config = {
-                ...config,
-                headers: {
-                    'X-CSRFToken': Cookies.get('csrftoken')
-                }
-            }
-
-            return axios.patch(url, payload, _config).then(resp => resp.data);
         },
         saveAnswers({ state, commit, dispatch }) {
             const temp = 'http://localhost:8003/api/v1/answers/bulk/';
@@ -285,7 +101,7 @@ export default new Vuex.Store({
                 });
 
             return dispatch('post', { url: temp, payload: answersToSave }).then((answers) => {
-                commit('addAnswers', answers);
+                commit('setAnswers', answers);
 
                 return answers;
             });
@@ -327,17 +143,37 @@ export default new Vuex.Store({
 
             state.sectionQuestions = sectionQuestionsBySection;
         },
-        addQuestions(state, questions) {
+        setQuestions(state, questions) {
             questions.forEach((question) => {
                 Vue.set(state.questions, question.id, question);
             });
         },
-        addAnswers(state, answers) {
-            answers.forEach((answer) => {
-                Vue.set(state.answers, answer.question, answer);
+        setAnswers(state, answers) {
+            const answersByQuestion = answers.reduce((acc, answer) => {
+                acc[answer.question] = answer;
+                return acc;
+            }, {});
+
+            Object.keys(state.questions).forEach((questionId) => {
+                let answer;
+
+                if (questionId in answersByQuestion) {
+                    answer = answersByQuestion[questionId];
+                }
+                else {
+                    const question = state.questions[questionId];
+
+                    answer = {
+                        question: question.id,
+                        user: state.user.id,
+                        value: question.default
+                    };
+                }
+
+                Vue.set(state.answers, questionId, answer);
             });
         },
-        addTriggers(state, triggers) {
+        setTriggers(state, triggers) {
             const triggersByQuestion = triggers.reduce((acc, trigger) => {
                 if (!(trigger.from_question in acc)) {
                     acc[trigger.from_question] = [];
@@ -355,29 +191,29 @@ export default new Vuex.Store({
                 ...triggersByQuestion
             }
         },
-        addFields(state, fields) {
+        setFields(state, fields) {
             fields.forEach((field) => {
                 Vue.set(state.fields, field.id, field);
             });
         },
-        addMultipleChoiceOptions(state, multipleChoiceFieldOptions) {
-            multipleChoiceFieldOptions.forEach((multipleChoiceFieldOption) => {
-                const fieldId = multipleChoiceFieldOption.field;
+        setMultipleChoiceOptions(state, multipleChoiceOptions) {
+            multipleChoiceOptions.forEach((multipleChoiceOption) => {
+                const fieldId = multipleChoiceOption.field;
                 let value;
 
-                if (fieldId in state.multipleChoiceFieldOptions) {
-                    value = {...state.multipleChoiceFieldOptions[fieldId]};
+                if (fieldId in state.multipleChoiceOptions) {
+                    value = {...state.multipleChoiceOptions[fieldId]};
                 }
                 else {
                     value = {}
                 }
 
-                value[multipleChoiceFieldOption.id] = multipleChoiceFieldOption;
+                value[multipleChoiceOption.option] = multipleChoiceOption;
 
-                Vue.set(state.multipleChoiceFieldOptions, fieldId, value);
+                Vue.set(state.multipleChoiceOptions, fieldId, value);
             });
         },
-        addOptions(state, options) {
+        setOptions(state, options) {
             options.forEach((option) => {
                 Vue.set(state.options, option.id, option);
             });

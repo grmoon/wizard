@@ -11,7 +11,6 @@ from wizard.views.fields import (
 )
 from wizard.views.options import (
     CheckboxOptionViewSet,
-    MultipleChoiceOptionViewSet,
     RadioButtonOptionViewSet,
 )
 from wizard.views.through import (
@@ -31,7 +30,6 @@ __all__ = (
     'MeView',
     'CheckboxFieldViewSet',
     'CheckboxOptionViewSet',
-    'MultipleChoiceOptionViewSet',
     'FieldViewSet',
     'AnswerViewSet',
     'OptionViewSet',
