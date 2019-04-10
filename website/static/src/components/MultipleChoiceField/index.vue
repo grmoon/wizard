@@ -29,7 +29,7 @@ export default {
         ...mapState({
             options({ multipleChoiceFieldOptions, options }) {
                 const _options = this.field.options.reduce((acc, multipleChoiceFieldOptionId) => {
-                    const multipleChoiceFieldOption = multipleChoiceFieldOptions[multipleChoiceFieldOptionId];
+                    const multipleChoiceFieldOption = multipleChoiceFieldOptions[this.field.id][multipleChoiceFieldOptionId];
                     const option = options[multipleChoiceFieldOption.option];
 
                     const augmentedOption = {

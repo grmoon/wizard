@@ -188,16 +188,30 @@ export default new Vuex.Store({
         },
         getMultipleChoiceFieldOptions({ commit, dispatch, state }, _multipleChoiceFieldOptions) {
             const multipleChoiceFieldOptions = Array.from(_multipleChoiceFieldOptions);
-            const currentMultipleChoiceFieldOptionIds = Object.keys(state.multipleChoiceFieldOptions).map(id => parseInt(id));
             const newMultipleChoiceFieldOptions = multipleChoiceFieldOptions.filter((multipleChoiceFieldOption) => {
-                return currentMultipleChoiceFieldOptionIds.indexOf(multipleChoiceFieldOption.id) === -1;
+                let include;
+                const fieldId = multipleChoiceFieldOption.field;
+
+                if (!(fieldId in state.multipleChoiceFieldOptions)) {
+                    include = true;
+                }
+                else {
+                    const options = state.multipleChoiceFieldOptions[fieldId];
+
+                    if (multipleChoiceFieldOption.id in options) {
+                        include = false;
+                    }
+                    else {
+                        include = true;
+                    }
+                }
+
+                return include;
             });
 
             if (newMultipleChoiceFieldOptions.length === 0) {
                 return new Promise(resolve => resolve([]));
             }
-
-            commit('addMultipleChoiceOptions', multipleChoiceFieldOptions);
 
             const options = multipleChoiceFieldOptions.map((multipleChoiceFieldOption) => {
                 const option = multipleChoiceFieldOption.option;
@@ -206,6 +220,7 @@ export default new Vuex.Store({
                 return option;
             });
 
+            commit('addMultipleChoiceOptions', multipleChoiceFieldOptions);
             return dispatch('getOptions', options);
         },
         getOptions({ commit, state }, _options) {
@@ -347,7 +362,19 @@ export default new Vuex.Store({
         },
         addMultipleChoiceOptions(state, multipleChoiceFieldOptions) {
             multipleChoiceFieldOptions.forEach((multipleChoiceFieldOption) => {
-                Vue.set(state.multipleChoiceFieldOptions, multipleChoiceFieldOption.id, multipleChoiceFieldOption);
+                const fieldId = multipleChoiceFieldOption.field;
+                let value;
+
+                if (fieldId in state.multipleChoiceFieldOptions) {
+                    value = {...state.multipleChoiceFieldOptions[fieldId]};
+                }
+                else {
+                    value = {}
+                }
+
+                value[multipleChoiceFieldOption.id] = multipleChoiceFieldOption;
+
+                Vue.set(state.multipleChoiceFieldOptions, fieldId, value);
             });
         },
         addOptions(state, options) {
