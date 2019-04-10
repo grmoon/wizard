@@ -86,7 +86,8 @@ class WizardStepResponseBuilder(object):
             .select_related('step')\
             .prefetch_related('step__sections')\
             .prefetch_related('step__sections__questions')\
-            .filter(wizard_id=wizard_id)[step_num - 1]
+            .filter(wizard_id=wizard_id)\
+            .order_by('position')[step_num - 1]
 
     @staticmethod
     def _get_step_sections_for_step(step):
