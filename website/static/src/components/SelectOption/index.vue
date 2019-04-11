@@ -4,15 +4,13 @@
     :disabled="option.disabled"
     :label="option.label"
     :value="option.value"
-  >{{ option.label }}</option>
+  >
+    {{ option.label }}
+  </option>
 </template>
 
 <script>
-import Option from '@components/Option';
-import { mapMutations } from 'vuex';
-
 export default {
-    components: { Option },
     props: {
         option: {
             required: true,

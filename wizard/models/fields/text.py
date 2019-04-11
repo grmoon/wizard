@@ -1,8 +1,8 @@
 from django.db import models
 
-from wizard.models.fields.field import Field
+from wizard.models.fields.json import JSONField
 
-class TextField(Field):
+class TextField(JSONField):
     maxlength = models.IntegerField(blank=True, null=True)
     minlength = models.IntegerField(blank=True, null=True)
     pattern = models.CharField(max_length=256, blank=True, null=True)

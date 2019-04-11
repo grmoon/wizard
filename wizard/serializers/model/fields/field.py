@@ -4,15 +4,13 @@ from wizard.serializers.model.fields.checkbox import CheckboxField, CheckboxFiel
 from wizard.serializers.model.fields.radio_button import RadioButtonField, RadioButtonFieldSerializer
 from wizard.serializers.model.fields.select import SelectField, SelectFieldSerializer
 from wizard.serializers.model.fields.text import TextField, TextFieldSerializer
+from wizard.serializers.model.fields.file import FileField, FileFieldSerializer
 
 class FieldSerializer(GenericSerializer):
     SERIALIZERS = {
         CheckboxField: CheckboxFieldSerializer,
+        FileField: FileFieldSerializer,
         RadioButtonField: RadioButtonFieldSerializer,
         SelectField: SelectFieldSerializer,
         TextField: TextFieldSerializer,
     }
-
-    class Meta:
-        model = Field
-        fields = '__all__'

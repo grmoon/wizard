@@ -1,12 +1,12 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-from wizard.models import Answer
+from wizard.models import JSONAnswer
 from wizard.serializers import AnswerSerializer
 
 
 class AnswerViewSet(viewsets.ModelViewSet):
-    queryset = Answer.objects.all()
+    queryset = JSONAnswer.objects.all()
     serializer_class = AnswerSerializer
 
     def _get_by_question_ids(self, question_ids):

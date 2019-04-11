@@ -1,15 +1,24 @@
-from wizard.models.answer import Answer
+from wizard.models.answers import (
+    Answer,
+    FileAnswer,
+    JSONAnswer,
+)
 from wizard.models.fields import (
     CheckboxField,
     Field,
-    InputField,
+    FileField,
+    JSONField,
     MultipleChoiceField,
     RadioButtonField,
     SelectField,
     TextField,
 )
 from wizard.models.generic import GenericModel
-from wizard.models.question import Question
+from wizard.models.questions import (
+    FileQuestion,
+    JSONQuestion,
+    Question,
+)
 from wizard.models.options import (
     CheckboxOption,
     MultipleChoiceOption,
@@ -26,16 +35,23 @@ from wizard.models.through import (
 from wizard.models.section import Section
 from wizard.models.step import Step
 from wizard.models.wizard import Wizard
+from wizard.models.upload import Upload
 
 __all__ = (
+    'Answer',
     'CheckboxField',
     'CheckboxOption',
-    'MultipleChoiceOption',
-    'Answer',
     'Field',
+    'FileAnswer'
+    'FileField',
+    'FileQuestion',
     'GenericModel',
-    'InputField',
+    'JSONAnswer',
+    'JSONField',
+    'JSONQuestion',
     'MultipleChoiceField',
+    'MultipleChoiceOption',
+    'MultipleChoiceOption',
     'Option',
     'Question',
     'RadioButtonField',
@@ -48,7 +64,7 @@ __all__ = (
     'StepSection',
     'TextField',
     'Trigger',
+    'Upload',
     'Wizard',
     'WizardStep',
-    'MultipleChoiceOption',
 )

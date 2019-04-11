@@ -2,8 +2,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
+from wizard.models.base import BaseModel
 
-class GenericModel(models.Model):
+
+class GenericModel(BaseModel):
     content_object = GenericForeignKey('content_type', 'id')
     content_type = models.ForeignKey(ContentType, blank=False, on_delete=models.CASCADE, editable=False)
 

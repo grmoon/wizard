@@ -2,11 +2,12 @@
   <component
     :is="component"
     :answer="answer"
-    :field="_field"
+    :field="augmentedField"
   />
 </template>
 
 <script>
+import FileField from '@components/FileField';
 import MultipleChoiceField from '@components/MultipleChoiceField';
 import TextField from '@components/TextField';
 import { v4 as uuid } from 'uuid';
@@ -23,7 +24,7 @@ export default {
         },
     },
     computed: {
-        _field() {
+        augmentedField() {
             return {
                 ...this.field,
                 uuid: uuid()
@@ -32,8 +33,9 @@ export default {
         component() {
             return {
                 'CheckboxField': MultipleChoiceField,
-                'SelectField': MultipleChoiceField,
+                'FileField': FileField,
                 'RadioButtonField': MultipleChoiceField,
+                'SelectField': MultipleChoiceField,
                 'TextField': TextField,
             }[this.field.class]
         }

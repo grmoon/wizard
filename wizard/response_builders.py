@@ -1,10 +1,14 @@
 from collections import namedtuple
 
 from wizard.models import (
-    Answer,
     CheckboxField,
     CheckboxOption,
     Field,
+    FileAnswer,
+    FileField,
+    FileQuestion,
+    JSONAnswer,
+    JSONQuestion,
     MultipleChoiceField,
     Option,
     Question,
@@ -18,6 +22,7 @@ from wizard.models import (
     StepSection,
     TextField,
     Trigger,
+    Upload,
     WizardStep,
 )
 
@@ -33,16 +38,29 @@ from wizard.serializers import (
     TriggerSerializer,
     MultipleChoiceOptionSerializer,
     WizardStepSerializer,
+    UploadSerializer,
 )
 
 MultipleChoiceFieldMapping = namedtuple('FieldMapping', ('field_class', 'option_class'))
+QuestionAnswerMapping = namedtuple('QuestionMapping', ('question_class', 'answer_class'))
 
 class WizardStepResponseBuilder(object):
-    FIELDS = (
+    FIELD_CLASSES = (
         CheckboxField,
         RadioButtonField,
         SelectField,
         TextField,
+        FileField,
+    )
+
+    ANSWER_CLASSES = (
+        FileAnswer,
+        JSONAnswer,
+    )
+
+    QUESTION_CLASSES = (
+        FileQuestion,
+        JSONQuestion,
     )
 
     MULTIPLE_CHOICE_FIELD_MAPPINGS = (
@@ -58,11 +76,15 @@ class WizardStepResponseBuilder(object):
         step_sections = cls._get_step_sections_for_step(step)
         sections = step.sections.all()
         section_questions = cls._get_section_questions_for_sections(sections)
-        questions = cls._get_questions_for_section_questions(section_questions)
-        triggers = cls._get_triggers_from_questions(questions)
-        answers = cls._get_answers_from_questions(user, questions)
 
-        field_pks = questions.values_list('field_id', flat=True)
+        # From here down, there are multiple subclasses for every class
+        # e.g. Answer => JSONAnswer & FileAnswer, Question => JSONQuestion & FileQuestion
+        questions = cls._get_questions_for_section_questions(section_questions)
+        answers = cls._get_answers_from_questions(user, questions)
+        triggers = cls._get_triggers_from_questions(questions)
+        uploads = cls._get_uploads_from_answers(answers)
+
+        field_pks = [question.field_id for question in questions]
         fields = cls._get_fields_from_pks(field_pks)
         (options, multiple_choice_options) = cls._get_options_from_field_pks(field_pks)
 
@@ -78,6 +100,7 @@ class WizardStepResponseBuilder(object):
             'answers': AnswerSerializer(answers, many=True).data,
             'multiple_choice_options': MultipleChoiceOptionSerializer(multiple_choice_options, many=True).data,
             'options': OptionSerializer(options, many=True).data,
+            'uploads': UploadSerializer(uploads, many=True).data,
         }
 
     @staticmethod
@@ -101,13 +124,6 @@ class WizardStepResponseBuilder(object):
             .filter(section__in=sections)\
             .all()
 
-    @staticmethod
-    def _get_questions_from_pks(question_pks):
-        return Question.objects\
-            .prefetch_related('triggers')\
-            .filter(pk__in=question_pks)\
-            .all()
-
     @classmethod
     def _get_questions_for_section_questions(cls, section_questions):
         question_pks = section_questions.values_list('question_id', flat=True)
@@ -115,15 +131,33 @@ class WizardStepResponseBuilder(object):
         questions_from_section_questions = cls._get_questions_from_pks(question_pks)
         questions_from_triggers = cls._get_questions_for_question_triggers(questions_from_section_questions)
 
-        return questions_from_section_questions | questions_from_triggers
+        return list(questions_from_section_questions) + list(questions_from_triggers)
+
+    @classmethod
+    def _get_questions_from_pks(cls, question_pks):
+        questions = []
+
+        for question_class in cls.QUESTION_CLASSES:
+            _questions = question_class.objects\
+                .filter(pk__in=question_pks)\
+                .all()
+
+            questions += list(_questions)
+
+        return questions
 
     @classmethod
     def _get_questions_for_question_triggers(cls, questions):
-        to_question_pks = questions.values_list('triggers', flat=True)
+        from_question_pks = [question.pk for question in questions]
+
+        to_question_pks = Trigger.objects\
+            .filter(from_question__pk__in=from_question_pks)\
+            .values_list('to_question', flat=True)
+
         to_questions = cls._get_questions_from_pks(to_question_pks)
 
-        if to_questions.exists():
-            questions = to_questions | cls._get_questions_for_question_triggers(to_questions)
+        if len(to_questions) > 0:
+            questions = to_questions + cls._get_questions_for_question_triggers(to_questions)
         else:
             questions = to_questions
 
@@ -131,25 +165,34 @@ class WizardStepResponseBuilder(object):
 
     @staticmethod
     def _get_triggers_from_questions(questions):
-        return Trigger.objects.filter(from_question__in=questions).all()
+        question_pks = [question.pk for question in questions]
+
+        return Trigger.objects.filter(from_question__pk__in=question_pks).all()
 
     @classmethod
     def _get_fields_from_pks(cls, field_pks):
         fields = list()
 
-        for field_class in cls.FIELDS:
-            fields += list(cls._get_fields(field_class, field_pks))
+        for field_class in cls.FIELD_CLASSES:
+            fields += list(field_class.objects.filter(pk__in=field_pks))
 
         return fields
 
-    def _get_fields(field_class, field_pks):
-        return field_class.objects.filter(pk__in=field_pks)
+    @classmethod
+    def _get_answers_from_questions(cls, user, questions):
+        answers = []
+        question_pks = [question.pk for question in questions]
+
+        for answer_class in cls.ANSWER_CLASSES:
+            answers += list(answer_class.objects.filter(user=user, question__pk__in=question_pks))
+
+        return answers
 
     @staticmethod
-    def _get_answers_from_questions(user, questions):
-        answer_pks = questions.values_list('answers__pk', flat=True)
+    def _get_uploads_from_answers(answers):
+        answer_pks = [answer.pk for answer in answers]
 
-        return Answer.objects.filter(pk__in=answer_pks, user=user).all()
+        return Upload.objects.filter(answer__pk__in=answer_pks).all()
 
     @classmethod
     def _get_options_from_field_pks(cls, field_pks):

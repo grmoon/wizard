@@ -19,6 +19,7 @@ from wizard.views.through import (
     TriggerViewSet,
     WizardStepViewSet,
 )
+from wizard.views.upload import UploadBulkAPIView
 from wizard.views.me import MeView
 from wizard.views.question import QuestionViewSet
 from wizard.views.section import SectionViewSet
@@ -27,15 +28,16 @@ from wizard.views.wizard import WizardViewSet
 
 
 __all__ = (
-    'MeView',
+    'AnswerViewSet',
+    'UploadBulkAPIView',
     'CheckboxFieldViewSet',
     'CheckboxOptionViewSet',
     'FieldViewSet',
-    'AnswerViewSet',
+    'MeView',
     'OptionViewSet',
     'QuestionViewSet',
-    'RadioButtonOptionViewSet',
     'RadioButtonFieldViewSet',
+    'RadioButtonOptionViewSet',
     'SectionQuestionViewSet',
     'SectionViewSet',
     'StepSectionViewSet',

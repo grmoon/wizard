@@ -2,8 +2,9 @@ from django.contrib.postgres import fields
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from wizard.models.base import BaseModel
 
-class Trigger(models.Model):
+class Trigger(BaseModel):
     CONDITION_E = 'E'
     CONDITION_GT = 'GT'
     CONDITION_GTE = 'GTE'
@@ -21,13 +22,13 @@ class Trigger(models.Model):
     )
 
     from_question = models.ForeignKey(
-        'wizard.Question',
+        'wizard.JSONQuestion',
         on_delete=models.CASCADE
     )
     position = models.PositiveIntegerField()
     condition = models.CharField(max_length=256, choices=CONDITIONS, default=CONDITION_E)
     to_question = models.ForeignKey(
-        'wizard.Question',
+        'wizard.JSONQuestion',
         on_delete=models.CASCADE,
         related_name='triggered_by'
     )

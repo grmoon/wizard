@@ -1,7 +1,8 @@
 from django.db import models
 
+from wizard.models.base import BaseModel
 
-class MultipleChoiceOption(models.Model):
+class MultipleChoiceOption(BaseModel):
     option = models.ForeignKey('wizard.Option', on_delete=models.CASCADE)
     position = models.PositiveIntegerField()
 

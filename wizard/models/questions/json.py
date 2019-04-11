@@ -1,16 +1,13 @@
 from django.contrib.postgres import fields as postgres_fields
 from django.db import models
+from wizard.models.questions.question import Question
 
 
-class Question(models.Model):
+class JSONQuestion(Question):
     default = postgres_fields.JSONField(blank=True, null=True)
-    field = models.ForeignKey('wizard.Field', on_delete=models.CASCADE)
-    text = models.CharField(max_length=256)
+    field = models.ForeignKey('wizard.JSONField', on_delete=models.CASCADE)
     triggers = models.ManyToManyField(
         'self',
         through='wizard.Trigger',
         symmetrical=False
     )
-
-    def __str__(self):
-        return self.text

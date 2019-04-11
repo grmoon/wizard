@@ -137,3 +137,6 @@ REST_FRAMEWORK = {
         'wizard_test2.utils.BrowsableAPIRendererWithoutForms',
     ),
 }
+
+MEDIA_ROOT = os.path.abspath('media')
+MEDIA_URL = '/media/'

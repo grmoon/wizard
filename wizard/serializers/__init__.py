@@ -17,9 +17,11 @@ from wizard.serializers.model import (
     UserSerializer,
     WizardSerializer,
     WizardStepSerializer,
+    UploadSerializer,
 )
 
 __all__ = (
+    'UploadSerializer',
     'AnswerSerializer',
     'CheckboxOptionSerializer',
     'CheckboxFieldSerializer',

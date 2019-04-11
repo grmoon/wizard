@@ -1,7 +1,7 @@
 from django.db import models
 
-from wizard.models.fields.field import Field
+from wizard.models.fields.json import JSONField
 
 
-class MultipleChoiceField(Field):
+class MultipleChoiceField(JSONField):
     pass

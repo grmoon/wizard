@@ -1,7 +1,8 @@
 from django.db import models
 
+from wizard.models.base import BaseModel
 
-class StepSection(models.Model):
+class StepSection(BaseModel):
     position = models.PositiveIntegerField()
     section = models.ForeignKey('wizard.Section', on_delete=models.CASCADE)
     step = models.ForeignKey('wizard.Step', on_delete=models.CASCADE)

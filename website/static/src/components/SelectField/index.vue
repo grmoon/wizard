@@ -1,13 +1,13 @@
 <template>
   <select
+    :autocomplete="field.autocomplete"
+    :autofocus="field.autofocus"
+    :disabled="field.disabled"
+    :multiple="field.multiple"
+    :name="field.uuid"
+    :required="field.required"
+    :size="field.size"
     @change="select_onChange"
-    :autocomplete='field.autocomplete'
-    :autofocus='field.autofocus'
-    :disabled='field.disabled'
-    :multiple='field.multiple'
-    :name='field.uuid'
-    :required='field.required'
-    :size='field.size'
   >
     <SelectOption
       v-for="(option, index) in options"

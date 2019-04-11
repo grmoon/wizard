@@ -19,6 +19,7 @@ function defaultState(user) {
         stepSections: undefined,
         triggers: {},
         wizardStep: undefined,
+        uploads: {},
         user
     }
 }
@@ -50,6 +51,7 @@ export default new Vuex.Store({
                 triggers,
                 multiple_choice_options: multipleChoiceOptions,
                 options,
+                uploads,
             }) => {
                 commit('setWizardStep', wizardStep);
                 commit('setStep', step);
@@ -60,9 +62,9 @@ export default new Vuex.Store({
                 commit('setTriggers', triggers);
                 commit('setMultipleChoiceOptions', multipleChoiceOptions);
                 commit('setOptions', options);
-
                 commit('setQuestions', questions);
                 commit('setAnswers', answers);
+                commit('setUploads', uploads);
             });
         },
         getUser({ commit, dispatch }) {
@@ -76,7 +78,8 @@ export default new Vuex.Store({
             const _config = {
                 ...config,
                 headers: {
-                    'X-CSRFToken': Cookies.get('csrftoken')
+                    'Content-Type': 'multipart/form-data',
+                    'X-CSRFToken': Cookies.get('csrftoken'),
                 }
             }
 
@@ -84,26 +87,72 @@ export default new Vuex.Store({
         },
         saveAnswers({ state, commit, dispatch }) {
             const temp = 'http://localhost:8003/api/v1/answers/bulk/';
-            const answersToSave= Object.values(state.answers)
+            const formData = new FormData();
+            const jsonAnswers = [];
+            const fileAnswers = [];
+            let fileIndex = 0;
+
+            Object.values(state.answers)
                 .filter(answer => answer.value !== null)
-                .map((answer) => {
+                .forEach((answer) => {
                     const _answer = {
                         question_id: answer.question,
                         user_id: answer.user,
-                        value: answer.value,
                     };
 
                     if (answer.id !== null) {
                         _answer['id'] = answer.id;
                     }
 
-                    return _answer;
+                    if (answer.value instanceof FileList) {
+                        _answer['file_indices'] = [];
+
+                        Array.from(answer.value).forEach((file) => {
+                            const currentFileIdx = fileIndex++;
+                            _answer['file_indices'].push(currentFileIdx);
+                            formData.append(`files`, file);
+                        });
+
+                        fileAnswers.push(_answer);
+                    }
+                    else {
+                        _answer['value'] = answer.value;
+                        jsonAnswers.push(_answer);
+                    }
                 });
 
-            return dispatch('post', { url: temp, payload: answersToSave }).then((answers) => {
-                commit('setAnswers', answers);
+            formData.append('file_answers', JSON.stringify(fileAnswers));
+            formData.append('json_answers', JSON.stringify(jsonAnswers));
+
+            return dispatch('post', { url: temp, payload: formData }).then(({ answers, uploads }) => {
+                commit('updateUploads', uploads);
+                commit('updateAnswers', answers);
 
                 return answers;
+            });
+        },
+        delete(store, { url, config={} }) {
+            const _config = {
+                ...config,
+                headers: {
+                    'X-CSRFToken': Cookies.get('csrftoken'),
+                }
+            }
+
+            return axios.delete(url, _config).then(resp => resp.data);
+        },
+        deleteUploads({ state, dispatch }, uploadIds) {
+            const url = 'http://localhost:8003/api/v1/uploads/bulk/';
+            const config = {
+                params: {
+                    upload_ids: uploadIds,
+                }
+            }
+
+            return dispatch('delete', { url, config }).then((uploads) => {
+                uploads.forEach((upload) => {
+                    Vue.delete(state.uploads, upload.answer);
+                });
             });
         }
     },
@@ -146,6 +195,20 @@ export default new Vuex.Store({
         setQuestions(state, questions) {
             questions.forEach((question) => {
                 Vue.set(state.questions, question.id, question);
+            });
+        },
+        updateAnswers(state, answers) {
+            answers.forEach((answer) => {
+                Vue.set(state.answers, answer.question, answer);
+            });
+        },
+        updateUploads(state, uploads) {
+            uploads.forEach((upload) => {
+                if (!(upload.answer in state.uploads)) {
+                    Vue.set(state.uploads, upload.answer, []);
+                }
+
+                state.uploads[upload.answer].push(upload);
             });
         },
         setAnswers(state, answers) {
@@ -217,6 +280,17 @@ export default new Vuex.Store({
             options.forEach((option) => {
                 Vue.set(state.options, option.id, option);
             });
+        },
+        setUploads(state, uploads) {
+            state.uploads = uploads.reduce((acc, upload) => {
+                if (!(upload.answer in acc)) {
+                    acc[upload.answer] = []
+                }
+
+                acc[upload.answer].push(upload);
+
+                return acc;
+            }, {});
         },
         setAnswerValue(state, { questionId, value }) {
             Vue.set(state.answers[questionId], 'value', value);

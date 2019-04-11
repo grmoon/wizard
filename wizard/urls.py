@@ -22,6 +22,7 @@ from wizard.views import (
     TriggerViewSet,
     WizardStepViewSet,
     WizardViewSet,
+    UploadBulkAPIView,
 )
 
 router = DefaultRouter()
@@ -46,5 +47,6 @@ router.register('wizards', WizardViewSet, basename='wizard')
 urlpatterns = [
     path('me/', MeView.as_view(), name='me'),
     path('answers/bulk/', AnswerBulkAPIView.as_view(), name='answer.bulk'),
+    path('uploads/bulk/', UploadBulkAPIView.as_view(), name='upload.bulk'),
 ] + router.urls
 
