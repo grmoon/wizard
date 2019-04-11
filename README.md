@@ -1,4 +1,39 @@
 # wizard
+## Installation
+**This has only been tested using python 3.7.0 and django 2.2**
+1. Install [pyenv](https://github.com/pyenv/pyenv)
+1. Install python 3.7.0
+    ```bash
+    pyenv install 3.7.0
+    ```
+1. Specify which version of python you'd like to use
+    ```bash
+    pyenv local 3.7.0
+    ```
+1. Create and activate a virtual environment
+    ```bash
+    python -m venv venv
+    . venv/bin/activate
+    ```
+1. Clone the repo
+    ```bash
+    git clone git@github.com:grmoon/wizard.git
+    cd wizard
+    ```
+1. Install dependencies
+    ```bash
+    pip install --upgrade pip setuptools
+    pip install -r requirements.txt
+    ````
+1. Run migrations (after updating settings.py to point to the right db)
+    ```bash
+    python manage.py migrate
+    ````
+1. Create a superuser
+    ```bash
+    python manage.py createsuperuser
+    ````
+After running those steps you should be able to start the django server, login to the admin interface, and begin creating a wizard.
 ## Creating a Wizard
 Wizards are composed of steps. Steps are composed of sections. Sections are composed of questions. Questions are linked to fields. The easiest way to create a wizard is to start from the bottom up.
 1. Create whatever fields you're need (e.g. TextField, RadioButtonField)
