@@ -47,5 +47,7 @@ As many components as possible are completely standalone. For example, a Step is
 * StepSection: Connects a Step to a Section
 * SectionQuestion: Connects a Section to a Question
 * Trigger: Connects one Question to another
+* RadioButtonFieldOption: Connects a RadioButtonField to an Option
+* CheckboxFieldOption: Connects a CheckboxField to an Option
 ### Positions
-When creating a wizard, you will care what order the steps are rendered, in what order the sections are rendered in a step, and in what order questions are rendered in a section. Each of the through models listed above has a field called `position`, which allows you to specify the order in which Steps/Sections/Questions should be rendered. Entities with lower `position` values will always be rendered before entities with higher values.
+When creating a wizard, you will care in what order the steps are rendered, in what order the sections are rendered in a step, and in what order questions are rendered in a section. Each of the through models listed above has a field called `position`, which allows you to specify the order in which Steps/Sections/Questions/Options should be rendered. Entities with lower `position` values will always be rendered before entities with higher values.
