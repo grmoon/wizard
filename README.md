@@ -51,5 +51,16 @@ As many components as possible are completely standalone. For example, a Step is
 * CheckboxFieldOption: Connects a CheckboxField to an Option
 ### Positions
 When creating a wizard, you will care in what order the steps are rendered, in what order the sections are rendered in a step, and in what order questions are rendered in a section. Each of the through models listed above has a field called `position`, which allows you to specify the order in which Steps/Sections/Questions/Options should be rendered. Entities with lower `position` values will always be rendered before entities with higher values.
+## Navigation
+URLs of the form `/wizard/<wizard_id>/step/<step_num>/` are currently supported. The `wizard_id` parameter is self-explanatory. The `step_num` parameter *does not correspond to the id or position of a step*. Instead, it is the step of the wizard you wish to show. For example, if there is a Wizard with 3 steps:
+
+| id | position | wizard_id |
+| :-: | :-: | :-: |
+| 10 | 2 | 1 |
+| 11 | 3 | 1 |
+| 21 | 4 | 1 |
+
+The urls `/wizard/1/step/1/`, will return the step with id 10, `/wizard/1/step/2/` will return the step with id 11, and `/wizard/1/step/3/` will return the step with id 21. Any other `step_num` param should result in a 404.
+        
 ## Entity-Relationship Diagram
 You can generate an ERD for this project using the [django-extensions graph_models](https://django-extensions.readthedocs.io/en/latest/graph_models.html) command. [pygraphviz](https://pygraphviz.github.io/) and [django-extensions](https://github.com/django-extensions/django-extensions) are included in requirements.txt, so the only thing you should have to do it install the requisite [GraphViz](http://www.graphviz.org/) utilities.
